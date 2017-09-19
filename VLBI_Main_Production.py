@@ -41,7 +41,7 @@ CntPlt_CumZ = True
 CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
+Mmx_Pbase = False
 fEdd_Npc = False
 fEdd_Mdot = False
 Mdot_Npc = False
@@ -107,10 +107,10 @@ eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two toge
 
 if (Lmx==24.0):	
 	f_Edd = 0.0001
-	fbin = 0.001
+	fbin = 1.00
 else:
-	f_Edd = 0.0001  ## sets L to M connection (accretion rate onto shining BH)
-	fbin = 0.01
+	f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
+	fbin = 1.0
 #f_Edd = 0.0001  ## LLAGN
 MdEff = 0.1
 

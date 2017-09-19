@@ -18,12 +18,12 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 #### INTEGRATION ERROR TOLS
 ###TRAP int
 Ntrap_z = 101 #25
-Ntrap_L = 41 #25
+Ntrap_L = 61 #25
 
-Ntrp_P = 31.
-Ntrp_q = 31.
+Ntrp_P = 41.
+Ntrp_q = 41.
 
-Lmx = 24.0#10.*30
+Lmx = 31.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
