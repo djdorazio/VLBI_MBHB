@@ -17,13 +17,13 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 81 #25
-Ntrap_L = 61 #25
+Ntrap_z = 121 #25
+Ntrap_L = 121 #25
 
 Ntrp_P = 41.
-Ntrp_q = 61.
+Ntrp_q = 41.
 
-Lmx = 24.0
+Lmx = 31.0
 
 
 ##################
@@ -142,10 +142,15 @@ def tres_int(P, qs, M, MdEff, eps, tEdd, xi):
 	return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0)
 
 def hc_int(P, qs, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi):
-	# if (P>PmaxNPC(KQ*pc2cm, M)):
-	# 	return 0.0
-	#else:
-	return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+	#The 6 is the max number of gav radii we allow BHs to get to eachother
+	if (P < 2.*ma.pi*6.**(1.5)*G*M/c/c/c):
+		#print "BHs are too close bra"
+		return 0.0*hPTA(P,M,qs,z, h, Om, OL)
+	#havent observed for 10 years yet...
+	# elif (P>10.0*yr2sec):#(P>PmaxNPC(KQ*pc2cm, M)):
+	#   	return np.exp(-P/(10.*yr2sec)) * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+	else:
+		return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
 
 
 
@@ -189,15 +194,15 @@ def GWB_GWgas_f(z, M, fGW, thMn, qmin_EHT, qmin_POP, eps_CBD, Pbase, KQ, MdEff, 
 	# else:
 	# 	FF = Numr/Dnmr
 
-	if (FF>1.0):
-	# 	if (FF>1.01):
-		print "frac>1!" # - DOES THIS HAPPEN 
-	 	print FF
-	 	FF = 1.0
-	if (FF<0):
-		print "frac<0!"
-		print FF 
-		FF=0.0
+	# if (FF>1.0):
+	# # 	if (FF>1.01):
+	# 	print "frac>1!" # - DOES THIS HAPPEN 
+	#  	print FF
+	#  	FF = 1.0
+	# if (FF<0):
+	# 	print "frac<0!"
+	# 	print FF 
+	# 	FF=0.0
 	
 
 	return fbin*FF#np.maximum(fbin *FF, 1.e-14)
@@ -341,7 +346,7 @@ def pdf_fEdd(x, xmin, a, x0, sig):
  	return (2.*(1. + a)*(np.exp(-(-x + x0)**2/(2.*sig**2)) + (-x)**a)*(1. - step(x))* step(x - xmin))/((2.*(-xmin)**a*xmin + (1. + a)*np.sqrt(2*np.pi)*sig*(spc.erf((0.7071067811865475*x0)/sig) - spc.erf((0.7071067811865475*(x0 - xmin))/sig)))*step(-xmin)*(-1. + step(xmin)))
 
 def CDF_fEdd(xcum, xmin, a, x0, sig):
-	Nftrap = 61
+	Nftrap = 41
 	xs = np.linspace(xmin, xcum, Nftrap)
 	return np.trapz( pdf_fEdd(xs, xmin, a, x0, sig), xs  )
 
@@ -376,7 +381,7 @@ def GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, 
 	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
 
 
-	f_Edd = 0.000001#10.**draw_fEdd(-6.0, 0.7, -0.6, 0.3)
+	f_Edd = 10.**draw_fEdd(-6.0, 0.3, -0.6, 0.3)
 
 
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
@@ -507,6 +512,7 @@ def GWB_Integrand_GWgas(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 
 	return dVdzdOm(z, h, Om, OL) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
 
 
+## INtegrand of Eqn (8) in draft
 def GWB_Integrand_GWgas_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
 	return dVdzdOm(z, h, Om, OL) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
 
@@ -524,9 +530,11 @@ def GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_P
 	MdEff = 0.1
 	Lmn = np.minimum( Lmin(z, h, Om, OL, Fmin), Lmx)
 	Ls = np.linspace(Lmn,Lmx, Ntrap_L)
-	return np.fabs( (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) ) )
-	#return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
+	#return np.trapz(GWB_Integrand_GWgas_f(Ls, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL), Ls)
+	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) ) 
+	
 
+	#return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
 
 
 
@@ -540,11 +548,15 @@ def GWB_Trap_dz(zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, 
 
 def GWB_Trap_dz_f(fGW, zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
 	zs = np.linspace(0.000001, zmax, Ntrap_z)
+	#return 4.* np.pi * np.trapz(GWB_Trap_dL_f(zs, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL), zs)
 	res = 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
 	# if (res<0.0):
 	# 	print "negative z integral?"
 	# 	print res
+	
 	return np.fabs(res)
+	
+
 	#return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
 	
 	#return (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )

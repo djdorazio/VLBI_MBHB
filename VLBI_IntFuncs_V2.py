@@ -425,8 +425,9 @@ def FNum_nmr(z, M, thMn, qmin, eps, Pbase, MdEff, xi, KQ, h, Om, OL):
 
 	PMin = PminRes(M, thmn, z, h, Om, OL)
 	Pbase = np.maximum(Pbase, PMin*(1.+z))	
+	PIsco = 2.*np.pi * (6.)**(1.5) *G*M/c/c/c
 
-	if (Pbase<=PMin*(1.+z) or qmin>=1.0):
+	if (Pbase<=PMin*(1.+z) or qmin>=1.0 or PMin<PIsco):
 		return 0.0
 	else:
 
@@ -534,7 +535,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	
 
 	Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
-
+	
 
 	#FF = fbin_GWgas(z, M, thMn, qmin, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 	#dMbn = Mbn/(Lmm*1.e7) * Msun

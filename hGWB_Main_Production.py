@@ -70,7 +70,7 @@ OL=0.7
 
 Mmx = 2.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
 Mmax = 2.*10.**10*Msun
-Mmin= 10.**5*Msun 
+Mmin= 1.0*10.**5*Msun 
 
 
 
@@ -133,7 +133,7 @@ qmins = np.linspace(-3., 0.0, Ng)
 
 
 
-Nh = 50
+Nh = 40
 Ntrial = 50
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
@@ -150,9 +150,11 @@ hoff_9 = np.zeros(Nh)
 hoff_10 = np.zeros(Nh)
 hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
 if (fEdd_Dist==True):
+	fbin = 0.0001
 	for i in range(Nh):	
 		for j in range(Ntrial):
 			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
+			print "%g/%g" %(Ntrial*i+j+1, Nh*Ntrial)
 		# hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_3[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
@@ -164,24 +166,26 @@ if (fEdd_Dist==True):
 		# hoff_9[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_10[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 else:
+	fbin = 0.1
+	f_Edd = 1.0
 	for i in range(Nh):	
 		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		#hoff_2[i] = -IntzZ_Trap_GWB_f([eps*0.1,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*0.01,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		#hoff_4[i] = -IntzZ_Trap_GWB_f([eps*0.01,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-
+		hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd*0.001, xi, fbin, h, Om, OL)
+		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*0.001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
+		hoff_4[i] = -IntzZ_Trap_GWB_f([eps*0.001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd*0.001, xi, fbin, h, Om, OL)
+		print "%g/%g" %(i+1, Nh)
 
 
 if (fEdd_Dist==True):
 	hl_mns = np.zeros(Nh)
 	hl_stds = np.zeros(Nh)
 	for i in range (Nh):
-		h_mns[i] = np.mean(hs[i])
-		h_stds[i] = np.std(hs[i])
+		# h_mns[i] = np.mean(hs[i])
+		# h_stds[i] = np.std(hs[i])
 		hl_mns[i] = np.mean(np.log10(hs[i]))
 		hl_stds[i] = np.std(np.log10(hs[i]))
 
-	
+
 
 	hdwn = hl_mns-hl_stds
 	hup = hl_mns+hl_stds
@@ -192,6 +196,7 @@ if (fEdd_Dist==True):
 
 
 	plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
+	plt.scatter(np.log10(fPTA), np.log10(hPTA), color='black', marker='*')
 
 	plt.plot(fPTAs, hl_mns, color = 'black',  alpha=0.5)
 	plt.plot(fPTAs, hup, color = 'black',  alpha=0.5)
@@ -242,36 +247,38 @@ if (fEdd_Dist==True):
 else:
 
 	plt.figure(figsize=[8,6])	
-	
-	p1 = plt.plot(fPTAs, np.log10(hoff_1))
-	p2 = plt.plot(fPTAs, np.log10(hoff_2))
-	p3 = plt.plot(fPTAs, np.log10(hoff_3))
-	p4 = plt.plot(fPTAs, np.log10(hoff_4))
+
+	p1 = plt.plot(fPTAs, np.log10(hoff_1), linewidth=2)
+	p2 = plt.plot(fPTAs, np.log10(hoff_2), linewidth=2)
+	p3 = plt.plot(fPTAs, np.log10(hoff_3), linewidth=2)
+	p4 = plt.plot(fPTAs, np.log10(hoff_4), linewidth=2)
+	p5 = plt.plot(fPTAs, np.log10(hGW), color='gray',  linewidth=2, linestyle=':')
+	plt.scatter(np.log10(fPTA), np.log10(hPTA), color='black', marker='*')
+
+	plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
+	plt.axvspan(   np.log10(2./PminRes(1.e10*Msun, thMn, 3.0, h, Om, OL)),   np.log10(2./(10.*yr2sec)), color='orange', alpha=0.2, lw=0, hatch="+")
 
 
-	p1 = plt.scatter(fPTAs, np.log10(hoff_1), color="grey", alpha=0.3)
-	p2 = plt.scatter(fPTAs, np.log10(hoff_2), color="grey", alpha=0.3)
-	p3 = plt.scatter(fPTAs, np.log10(hoff_3), color="grey", alpha=0.3)
-	p4 = plt.scatter(fPTAs, np.log10(hoff_4), color="grey", alpha=0.3)
-	p5 = plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
-
-
-
-
-	if (Lmx==24.0):
-		plt.title("LLAGN")
-		#plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"$f_{\rm{Edd}}=10^{-4}$; $f_{\rm{bin}} = 10^{-3}$", r"$f_{\rm{Edd}}=10^{-3}$", r"$f_{\rm{Edd}}=10^{-2}$", r"$f_{\rm{Edd}}=10^{-4}$, $\dot{\mathcal{M}}=0.1$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
-		Savename = 'hc_of_fGW_LLAGN_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
-	else:
-		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = 0.1$", r"$f_{\rm{Edd}}=0.1$", r"$f_{\rm{Edd}}=10^{-4}$", r"$\dot{\mathcal{M}}=0.1$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
-		Savename = 'hc_of_fGW_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
-
+	# plt.figtext(0.8,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+	# plt.figtext(0.8,0.75, r"$q^{\rm{Pmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
 
 	plt.xlabel(r'$\log{f_{\rm{GW}}}$')
 	plt.ylabel(r'$\log{h_c}$')
 	plt.tight_layout()
 
 
+	FminSv = Fmin/mJy2cgs/1000.
+	thMnSv = thMn/mu_as2rad 
+	PbaseSv = Pbase/yr2sec
+	Lmx_cgs = Lmx + 7.0
+
+	if (Lmx==24.0):
+		plt.title("LLAGN")
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		Savename = 'hc_of_fGW_LLAGN_deltaFeDD_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
+	else:
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		Savename = 'hc_of_fGW_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
 
 	Savename = Savename.replace('.', 'p')
 	Savename = Savename.replace('ppng', '.png')
