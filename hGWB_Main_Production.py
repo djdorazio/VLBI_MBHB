@@ -2,7 +2,7 @@ import numpy as np
 
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
@@ -173,13 +173,13 @@ else:
 
 
 if (fEdd_Dist==True):
-hl_mns = np.zeros(Nh)
-hl_stds = np.zeros(Nh)
-for i in range (Nh):
-	h_mns[i] = np.mean(hs[i])
-	h_stds[i] = np.std(hs[i])
-	hl_mns[i] = np.mean(np.log10(hs[i]))
-	hl_stds[i] = np.std(np.log10(hs[i]))
+	hl_mns = np.zeros(Nh)
+	hl_stds = np.zeros(Nh)
+	for i in range (Nh):
+		h_mns[i] = np.mean(hs[i])
+		h_stds[i] = np.std(hs[i])
+		hl_mns[i] = np.mean(np.log10(hs[i]))
+		hl_stds[i] = np.std(np.log10(hs[i]))
 
 	
 

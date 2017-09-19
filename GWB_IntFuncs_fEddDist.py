@@ -17,11 +17,11 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 61 #25
+Ntrap_z = 81 #25
 Ntrap_L = 61 #25
 
 Ntrp_P = 41.
-Ntrp_q = 41.
+Ntrp_q = 61.
 
 Lmx = 24.0
 
@@ -341,7 +341,7 @@ def pdf_fEdd(x, xmin, a, x0, sig):
  	return (2.*(1. + a)*(np.exp(-(-x + x0)**2/(2.*sig**2)) + (-x)**a)*(1. - step(x))* step(x - xmin))/((2.*(-xmin)**a*xmin + (1. + a)*np.sqrt(2*np.pi)*sig*(spc.erf((0.7071067811865475*x0)/sig) - spc.erf((0.7071067811865475*(x0 - xmin))/sig)))*step(-xmin)*(-1. + step(xmin)))
 
 def CDF_fEdd(xcum, xmin, a, x0, sig):
-	Nftrap = 41
+	Nftrap = 61
 	xs = np.linspace(xmin, xcum, Nftrap)
 	return np.trapz( pdf_fEdd(xs, xmin, a, x0, sig), xs  )
 
