@@ -85,7 +85,7 @@ DZ = 1.0
 ##FREE (and KEY) PARAMETERS
 ##Overall pop params (keep 1)
 xi = 4.0 ##lifetime of Quasar = xi*tEdd
-fbin = 1.0
+fbin = 0.0001
 
 
 
@@ -133,8 +133,8 @@ qmins = np.linspace(-3., 0.0, Ng)
 
 
 
-Nh = 40
-Ntrial = 10
+Nh = 50
+Ntrial = 50
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
 
@@ -152,7 +152,7 @@ hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
 if (fEdd_Dist==True):
 	for i in range(Nh):	
 		for j in range(Ntrial):
-			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.0001, h, Om, OL)
+			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 		# hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_3[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
@@ -165,9 +165,9 @@ if (fEdd_Dist==True):
 		# hoff_10[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 else:
 	for i in range(Nh):	
-		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.01, h, Om, OL)
+		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 		#hoff_2[i] = -IntzZ_Trap_GWB_f([eps*0.1,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*0.01,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.01, h, Om, OL)
+		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*0.01,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 		#hoff_4[i] = -IntzZ_Trap_GWB_f([eps*0.01,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 
 
@@ -183,51 +183,60 @@ for i in range (Nh):
 
 	
 
-hdwn = hl_mns-hl_stds
-hup = hl_mns+hl_stds
+	hdwn = hl_mns-hl_stds
+	hup = hl_mns+hl_stds
 
 
-plt.figure(figsize=[8,6])
+	plt.figure(figsize=[8,6])
+	plt.title("LLAGN")
 
 
-plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
+	plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
 
-plt.plot(fPTAs, hl_mns, color = 'black',  alpha=0.5)
-plt.plot(fPTAs, hup, color = 'black',  alpha=0.5)
-plt.plot(fPTAs, hdwn, color = 'black',  alpha=0.5)
-
-
-plt.fill_between(fPTAs, hdwn, hup, color='gray')
-
-hst = np.transpose(hs)
-for j in range(Ntrial):
-	plt.plot(fPTAs, np.log10(hst[j]), alpha=0.3)
-	plt.scatter(fPTAs, np.log10(hst[j]), color="grey", alpha=0.3)
+	plt.plot(fPTAs, hl_mns, color = 'black',  alpha=0.5)
+	plt.plot(fPTAs, hup, color = 'black',  alpha=0.5)
+	plt.plot(fPTAs, hdwn, color = 'black',  alpha=0.5)
 
 
+	plt.fill_between(fPTAs, hdwn, hup, color='gray')
 
-plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
-
-plt.axvspan(   np.log10(2./PminRes(1.e10*Msun, thMn, 3.0, h, Om, OL)),   np.log10(2./(10.*yr2sec)), color='orange', alpha=0.2, lw=0, hatch="+")
-
-
-FminSv = Fmin/mJy2cgs/1000.
-thMnSv = thMn/mu_as2rad 
-PbaseSv = Pbase/yr2sec
-Lmx_cgs = Lmx + 7.0
-
-Savename = 'hc_of_fGW_LLAGN_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
-
-
-plt.xlabel(r'$\log{f_{\rm{GW}}}$')
-plt.ylabel(r'$\log{h_c}$')
-plt.tight_layout()
+	hst = np.transpose(hs)
+	for j in range(Ntrial):
+		plt.plot(fPTAs, np.log10(hst[j]), alpha=0.3)
+		plt.scatter(fPTAs, np.log10(hst[j]), color="grey", alpha=0.3)
 
 
 
-Savename = Savename.replace('.', 'p')
-Savename = Savename.replace('ppng', '.png')
-plt.savefig(Savename)
+	plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
+
+	plt.axvspan(   np.log10(2./PminRes(1.e10*Msun, thMn, 3.0, h, Om, OL)),   np.log10(2./(10.*yr2sec)), color='orange', alpha=0.2, lw=0, hatch="+")
+
+
+	FminSv = Fmin/mJy2cgs/1000.
+	thMnSv = thMn/mu_as2rad 
+	PbaseSv = Pbase/yr2sec
+	Lmx_cgs = Lmx + 7.0
+
+
+
+	plt.xlabel(r'$\log{f_{\rm{GW}}}$')
+	plt.ylabel(r'$\log{h_c}$')
+	plt.tight_layout()
+
+
+	plt.figtext(0.8,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+	plt.figtext(0.8,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
+	plt.figtext(0.8,0.75, r"$q^{\rm{Pmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
+
+
+		
+
+
+	Savename = 'hc_of_fGW_LLAGN_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
+
+	Savename = Savename.replace('.', 'p')
+	Savename = Savename.replace('ppng', '.png')
+	plt.savefig(Savename)
 
 
 else:
