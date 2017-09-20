@@ -61,7 +61,9 @@ def dVdzdOm(z, h, Om, OL):
 	tH = DH/c
 	return  DH*(1.+z)*(1.+z)*Dang(z, h, Om, OL)*Dang(z, h, Om, OL)*OneoEe(z, Om, OL)
 
-
+def dtrdz(z, h, Om, OL):
+	H0 = 100.*h #kms Mpc^{-1}
+	return OneoEe(z, Om, OL)/(H0 * (1.+z))
 
 def fGW_pnt(P, M, qs):
 	etaGW = 5./256. * 1./(2.*ma.pi)**(8./3.) * c**5/G**(5./3.)
@@ -150,7 +152,7 @@ def hc_int(P, qs, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi):
 	# elif (P>10.0*yr2sec):#(P>PmaxNPC(KQ*pc2cm, M)):
 	#   	return np.exp(-P/(10.*yr2sec)) * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
 	else:
-		return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+		return dtrdz(z, h, Om, OL)*np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
 
 
 

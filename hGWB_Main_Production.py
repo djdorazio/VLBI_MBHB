@@ -18,7 +18,7 @@ import math as ma
 #from VLBI_IntFuncs_V2 import *
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 
 if (fEdd_Dist):
@@ -133,7 +133,7 @@ qmins = np.linspace(-3., 0.0, Ng)
 
 
 
-Nh = 40
+Nh = 10
 Ntrial = 50
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
