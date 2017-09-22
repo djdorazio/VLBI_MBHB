@@ -2,7 +2,7 @@ import numpy as np
 
 
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
@@ -48,7 +48,6 @@ qmin_Npc = False
 
 
 
-
 ##Constants
 c = 2.9979*10**(10)
 G = 6.673*10**(-8)
@@ -68,9 +67,9 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 2.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 2.*10.**10*Msun
-Mmin= 1.0*10.**5*Msun 
+Mmx = 200000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 200000.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun 
 
 
 
@@ -90,7 +89,7 @@ fbin = 0.0001
 
 
 #Accretion Params
-KQ = 10.**(-1.5) ## sets number of pc at which RL turns on
+KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
 eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
 f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
 MdEff = 0.1
@@ -100,7 +99,7 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 zeval = 0.5  #eval at this z
-zmax = 3.0 ### integrateo out to zmax=5.0
+zmax = 10.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
 Fmin = 1.0 * mJy2cgs
@@ -131,10 +130,93 @@ Mmxz = np.linspace(5.0, 10.0, Ng)
 zs = np.linspace(-2.0, 0.0, Ng)
 qmins = np.linspace(-3., 0.0, Ng)
 
+MEdd = LEdd_Fac/(MdEff*c*c)
+tEdd = 1./MEdd
+#eps=1.0
+epsa = eps/tEdd*1.00000000001
 
 
-Nh = 40
-Ntrial = 40
+qstst=1.0
+Mtst = 1.e8*Msun
+Ms = np.linspace(5.0, 10.0, 100)
+Ptst = 1.*yr2sec
+Ps = np.linspace(-2.0, 10.0, 100.)
+plt.figure(figsize=[8,6])
+plt.subplot(211)
+p1=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst*0.01, MdEff, epsa, tEdd, xi)/tEdd))
+
+p2=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst*0.1, MdEff, epsa, tEdd, xi)/tEdd))
+
+p3=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst, MdEff, epsa, tEdd, xi)/tEdd))
+
+p4=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst*10, MdEff, epsa, tEdd, xi)/tEdd))
+
+p5=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst*100, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.ylabel(r"$t_{\rm{res}}/t_{\rm{Edd}}$")
+plt.xlabel("P")
+
+plt.subplot(212)
+plt.plot(Ms, np.log10(tres_int(Ptst*0.01, qstst, 10.**Ms*Msun, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.plot(Ms, np.log10(tres_int(Ptst*0.1, qstst, 10.**Ms*Msun, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.plot(Ms, np.log10(tres_int(Ptst, qstst, 10.**Ms*Msun, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.plot(Ms, np.log10(tres_int(Ptst*10, qstst, 10.**Ms*Msun, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.plot(Ms, np.log10(tres_int(Ptst*100, qstst, 10.**Ms*Msun, MdEff, epsa, tEdd, xi)/tEdd))
+
+plt.tight_layout()
+
+plt.ylabel(r"$t_{\rm{res}}/t_{\rm{Edd}}$")
+plt.xlabel("M")
+
+plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"$M=6$, P=0.01", r"$M=7$, P=0.1",r"$M=8$, P=1.0",r"$M=9$, P=10.0",r"$M=10$, P=100.0"), "upper right", fontsize = 12)
+Savename = "tres_eps%g.png" %eps
+Savename = Savename.replace('ppng', '.png')
+plt.savefig(Savename)
+#plt.show()
+
+
+
+# numm = c/(0.1)	
+# L14 = 10.**(Lmm)*1.e7 /( (numm/(nu14))**(-0.1) )
+chitst = 1.0
+zzs = np.linspace(np.log10(0.05), np.log10(9.0), 1000)
+plt.figure(figsize=[8,6])
+# plt.plot(zs, np.log10(np.abs(smLFdz(28, 10.**zs, chi))))
+# plt.plot(zs, np.log10(smLF(28, 10.**zs, chi)))
+plt.subplot(211)
+plt.plot(zzs, smLFdz(22, 10.**zzs, chitst))
+plt.plot(zzs, smLFdz(25, 10.**zzs, chitst))
+plt.plot(zzs, smLFdz(28, 10.**zzs, chitst))
+# plt.plot(zzs, smLFdz(31, 10.**zzs, chi))
+# plt.plot(zzs, smLFdz(34, 10.**zzs, chi))
+# plt.plot(zzs, smLFdz(37, 10.**zzs, chi))
+# plt.plot(zzs, smLFdz(40, 10.**zzs, chi))
+plt.axhline(0.0, color='gray')
+plt.subplot(212)
+plt.plot(zzs, np.log10(smLF(np.log10(5.4*10.**23.5), 10.**zzs, chitst)))
+plt.plot(zzs, np.log10(smLF(np.log10(5.4*10.**24.5), 10.**zzs, chitst)))
+plt.plot(zzs, np.log10(smLF(np.log10(5.4*10.**25.5), 10.**zzs, chitst)))
+plt.plot(zzs, np.log10(smLF(np.log10(5.4*10.**26.5), 10.**zzs, chitst)))
+plt.plot(zzs, np.log10(smLF(np.log10(5.4*10.**27.5), 10.**zzs, chitst)))
+plt.plot(zzs, np.log10(smLF(np.log10(1.7*10.**28.0), 10.**zzs, chitst)))
+# plt.plot(zzs, np.log10(smLF(32, 10.**zzs, chi)))
+
+plt.ylim(-12.5,-3.5)
+
+plt.tight_layout()
+#plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"$M=6$, P=0.01", r"$M=7$, P=0.1",r"$M=8$, P=1.0",r"$M=9$, P=10.0",r"$M=10$, P=100.0"), "upper right", fontsize = 12)
+Savename = "LF_match_Yuan2017.png"
+Savename = Savename.replace('ppng', '.png')
+plt.savefig(Savename)
+
+
+
+Nh = 10
+Ntrial = 10
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
 
@@ -148,12 +230,13 @@ hoff_7 = np.zeros(Nh)
 hoff_8 = np.zeros(Nh)
 hoff_9 = np.zeros(Nh)
 hoff_10 = np.zeros(Nh)
-hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
+hGW = hPTA * (10.**fPTAs/(fPTA))**(-2./3)
+#hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
 if (fEdd_Dist==True):
-	fbin = 0.0001
+	fbin = 0.001
 	for i in range(Nh):	
 		for j in range(Ntrial):
-			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
+			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 			print "%g/%g" %(Ntrial*i+j+1, Nh*Ntrial)
 		# hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
@@ -166,13 +249,13 @@ if (fEdd_Dist==True):
 		# hoff_9[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_10[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 else:
-	fbin = 0.1
+	fbin = 1.0
 	f_Edd = 1.0
 	for i in range(Nh):	
-		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd*0.001, xi, fbin, h, Om, OL)
-		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*0.001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
-		hoff_4[i] = -IntzZ_Trap_GWB_f([eps*0.001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd*0.001, xi, fbin, h, Om, OL)
+		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
+		hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd*0.000001, xi, fbin, h, Om, OL)
+		hoff_3[i] = -IntzZ_Trap_GWB_f([eps*1000.0001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff*1.0, f_Edd, xi, fbin, h, Om, OL)
+		hoff_4[i] = -IntzZ_Trap_GWB_f([eps*1000.0001,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff*1.0, f_Edd*0.000001, xi, fbin, h, Om, OL)
 		print "%g/%g" %(i+1, Nh)
 
 
@@ -248,10 +331,10 @@ else:
 
 	plt.figure(figsize=[8,6])	
 
-	p1 = plt.plot(fPTAs, np.log10(hoff_1), linewidth=2)
-	p2 = plt.plot(fPTAs, np.log10(hoff_2), linewidth=2)
-	p3 = plt.plot(fPTAs, np.log10(hoff_3), linewidth=2)
-	p4 = plt.plot(fPTAs, np.log10(hoff_4), linewidth=2)
+	p1 = plt.plot(fPTAs, np.log10(hoff_1), linewidth=2, alpha=0.5, linestyle='--')
+	p2 = plt.plot(fPTAs, np.log10(hoff_2), linewidth=2, alpha=0.5, linestyle=':')
+	p3 = plt.plot(fPTAs, np.log10(hoff_3), linewidth=2, alpha=0.5, linestyle='-')
+	p4 = plt.plot(fPTAs, np.log10(hoff_4), linewidth=2, alpha=0.5, linestyle='-.')
 	p5 = plt.plot(fPTAs, np.log10(hGW), color='gray',  linewidth=2, linestyle=':')
 	plt.scatter(np.log10(fPTA), np.log10(hPTA), color='black', marker='*')
 

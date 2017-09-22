@@ -54,7 +54,7 @@ OL=0.7
 
 Mmx = 40000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
 Mmax = 40000.*10.**10*Msun
-Mmin= 10.**5*Msun 
+Mmin= 0.**5*Msun 
 
 
 
@@ -83,10 +83,10 @@ MdEff = 0.1
 qmin_EHT = 0.1   ### qminof EHT sample
 qmin_POP = 0.01  ### qmin of all MBHBS
 zeval = 0.5  #eval at this z
-zmax = 3.0 ### integrateo out to zmax=5.0
+zmax = 5.0 ### integrateo out to zmax=5.0
 
 ##Insturment params
-Fmin = 10000.0 * mJy2cgs
+Fmin = 10.0 * mJy2cgs
 thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
@@ -439,7 +439,7 @@ ppl7 = plt.plot(10.**zzs, np.log10(Foz7), color='#a6761d', linewidth=3)
 plt.ylabel(r'$\rm{log}_{10}[\mathcal{F}]$')
 plt.xlabel(r'$z$')
 plt.ylim(-5, 0.)
-plt.xlim(0.0,3.0)
+# plt.xlim(0.0,3.0)
 
 
 
@@ -455,7 +455,7 @@ ppl7 = plt.plot(10.**zzs, np.log10(zLumVol7), color='#a6761d', linewidth=3)
 plt.ylabel(r'$\rm{log}_{10}[4 \pi z \frac{d^2N}{dLdV}\frac{d^2V}{dzd\Omega}]$')
 plt.xlabel(r'$z$')
 plt.ylim(-2, 8.)
-plt.xlim(0.0,3.0)
+# plt.xlim(0.0,3.0)
 plt.axhline(0.0, color='black', linestyle=':')
 
 
@@ -470,7 +470,7 @@ ppl6 = plt.plot(10.**zzs, np.log10(Foz6*zLumVol6), color='#e6ab02', linewidth=3)
 ppl7 = plt.plot(10.**zzs, np.log10(Foz7*zLumVol7), color='#a6761d', linewidth=3)
 
 plt.ylim(-5, 5.)
-plt.xlim(0.0,3.0)
+# plt.xlim(0.0,3.0)
 plt.ylabel(r'$\rm{log}_{10}[4 \pi z \frac{d^2N}{dLdV}\frac{d^2V}{dzd\Omega} \times \mathcal{F}]$')
 plt.xlabel(r'$z$')
 

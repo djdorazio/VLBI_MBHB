@@ -16,13 +16,13 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 41 #25
-Ntrap_L = 41 #25
+Ntrap_z = 101 #25
+Ntrap_L = 101 #25
 
 Ntrp_P = 41.
-Ntrp_q = 41.
+Ntrp_q = 101.
 
-Lmx = 31.0
+Lmx = 32.0
 
 
 ##################
@@ -138,27 +138,42 @@ def hPTA(P,M,qs,z,h, Om, OL):
 
 
 
-def fGW_int(P, qs, M):
+def tGW_int(P, qs, M): # this is a res time!
 	etaGW = 4.*5./256. * 1./(2.*ma.pi)**(8./3.) * c**5/G**(5./3.)
 	return etaGW * M**(-5./3.) * P**(8./3.) * qs**(-1.) 
 
 
-def fGas_int(qs, MdEff, eps):
+def fGas_int(qs, MdEff, eps): ##This is a fraction if not mult by tEdd
 	return qs/(4.*eps)
 
+#def tres_int(P, qs, M, MdEff, eps, tEdd, xi):
+#	return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0)
+
 def tres_int(P, qs, M, MdEff, eps, tEdd, xi):
-	return np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0)
+	return  np.minimum( tGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )
 
 def hc_int(P, qs, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi):
 	#The 6 is the max number of gav radii we allow BHs to get to eachother
-	if (P < 2.*ma.pi*6.**(1.5)*G*M/c/c/c):
+	if (P < 2.*ma.pi*6.**(1.5)*G*M/c/c/c): #this causes deviation from f^(-2/3)
 		#print "BHs are too close bra"
 		return 0.0*hPTA(P,M,qs,z, h, Om, OL)
+	elif (P>PmaxNPC(KQ*pc2cm, M)):
+		tres =  tGW_int(P, qs, M)
+		return 2./3. * tres * 32./5. * G**(7./3.)/c**5 *( ma.pi*Mchirp(M, qs)*fGW(P) )**(10./3.) ##Has units of energy
 		##havent observed for 10 years yet...
 	# elif (P>10.0*yr2sec):#(P>PmaxNPC(KQ*pc2cm, M)):
-	#   	return np.exp(-P/(10.*yr2sec)) * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+	#   	#return np.exp(-np.sqrt(P/(10.*yr2sec))) * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+	# 	MEdd = LEdd_Fac/(MdEff*c*c)
+	# 	tEdd = 1./MEdd
+	# 	tres =  np.minimum( tGW_int(P, qs, M), fGas_int(qs, MdEff, eps)*tEdd )
+	# 	return np.exp(-P/(10.*yr2sec)) * 2./3. * tres * 32./5. * G**(7./3.)/c**5 *( ma.pi*Mchirp(M, qs)*fGW(P) )**(10./3.)
+	#else:
+		#return 2./3. * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+		#return 2./3. * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
 	else:
-		return dtrdz(z, h, Om, OL) * np.minimum( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/(xi*tEdd), 1.0) * hPTA(P,M,qs,z, h, Om, OL)* hPTA(P,M,qs,z, h, Om, OL)
+		## eps is passed with a 1/tEdd o give a mult by tEdd here
+		tres = np.minimum( tGW_int(P, qs, M), fGas_int(qs, MdEff, eps))
+		return 2./3. * tres * 32./5. * G**(7./3.)/c**5 *( ma.pi*Mchirp(M, qs)*fGW(P) )**(10./3.) ##Has units of energy
 
 
 
@@ -173,19 +188,19 @@ def GWBNum_f(z, M, fGW, thMn, qmin, eps, Pbase, MdEff, xi, KQ, h, Om, OL):
 	Porb = 2./(fGW * (1.+z))  ##Rest frame period from observed GW freq
 	qss = np.linspace(qmin, 1.0, Ntrp_q)
 	dq = (1.0-qmin)/Ntrp_q
-	return np.trapz(  hc_int(Porb, qss, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi), dx=dq)
-	#return  hc_int(Porb, 0.1, M, z, MdEff, eps, KQ, tEdd, h, Om, OL)
+	return np.trapz(  hc_int(Porb, qss, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi), qss)
+	#return   hc_int(Porb, 0.1, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi)
 
-def GWBDen_f(z, M, fGW, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
-	MEdd = LEdd_Fac/(MdEff*c*c)
-	tEdd = 1./MEdd
+# def GWBDen_f(z, M, fGW, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
+# 	MEdd = LEdd_Fac/(MdEff*c*c)
+# 	tEdd = 1./MEdd
 
-	eps = eps/tEdd
+# 	eps = eps/tEdd
 
-	Porb = 2./(fGW * (1.+z))
-	qss = np.linspace(qmin, 1.0, Ntrp_q)
-	dq = (1.0-qmin)/Ntrp_q
-	return  np.trapz(  tres_int(Porb, qss, M, MdEff, eps, tEdd, xi), dx=dq)
+# 	Porb = 2./(fGW * (1.+z))
+# 	qss = np.linspace(qmin, 1.0, Ntrp_q)
+# 	dq = (1.0-qmin)/Ntrp_q
+# 	return  np.trapz(  tres_int(Porb, qss, M, MdEff, eps, tEdd, xi), qss)
 
 
 
@@ -372,7 +387,7 @@ def GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbas
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 
 
-	Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F
+	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F
 
 
 	return GWB_GWgas_f(z, Mbn*Msun, fGW, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
@@ -449,10 +464,43 @@ def smLF_Steep(Lmm, z, chi):
 	#return ee1 * p0 / Lum1p4/ee2
 	return ee1 * p0 /np.log(10.) ## in lnL in Eq 8 of Yuan Wang +2016 so convert to per log10L
 
-def smLF(Lmm, z, chi):
+
+def smLF_old(Lmm, z, chi):
 	return smLF_Flat(Lmm, z, chi) + smLF_Steep(Lmm, z, chi)
 
 
+
+def smLF(Lmm, z, chi):
+	#https://arxiv.org/pdf/1708.03087.pdf
+	Lstar = 10.**(24.79)#10.**(24.79)
+	phi1 = 10.**(-4.72)#10.**(-4.72) ##this is phi0?
+	p1 = -1.29 ##SIGNS OF p1 nad p2 switched in YUAN PAPER!
+	p2 = 6.80
+	bet = 0.45 
+	gam = 0.31
+	zc= 0.78
+
+
+	p0 = (1./(1.+zc))**p1  +  (1./(1.+zc))**p2
+	e1 = p0 / ( ((1.+z)/(1.+zc))**p1 + ((1.+z)/(1.+zc))**p2 )
+
+	k2 = -0.16  ##k1 and k2 ARE BACKWARDS IN THE YAUN PAPER
+	k1 = 1.44
+	e2 = 10.**(k1*z + k2*z*z)
+
+
+	Lum408 = 10.**Lmm/chi
+	## do in d/dLogL for integration
+	L = Lum408/e2
+	rho = phi1/np.log(10.) * (L/Lstar)**(-bet) * np.exp(-(L/Lstar)**gam) 
+	return e1*rho
+
+
+
+
+def smLFdz(Lmm, z, chi):
+	dz = 0.0000001#z[0] - z[len(z)]/100.
+	return (smLF(Lmm, z+dz, chi) - smLF(Lmm, z, chi))/dz
 
 
 
@@ -471,8 +519,12 @@ def GWB_Integrand_GWgas(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 
 
 
 def GWB_Integrand_GWgas_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
-	return dVdzdOm(z, h, Om, OL) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
+	## G/c^2/f^2 * Energy has units of Vol, so keep Lum Func in n = N/Vol
+	return G/c/c * 4./(ma.pi*fGW*fGW*(1.+z)) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
+	##Check f^-2/3
+	#return G/c/c * 4./(ma.pi*fGW*fGW*(1.+z)) * 1.0/(10.**6 * pc2cm)**3 * GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
 
+	#return dVdzdOm(z, h, Om, OL) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
 
 
 def GWB_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
@@ -482,12 +534,11 @@ def GWB_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pba
 	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas(L, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas(Lmn, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas(Lmx, z,  Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
 
 
-def GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
-	MdEff = 0.1
+def GWB_Trap_dL_f(z, fGW, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
 	Lmn = np.minimum( Lmin(z, h, Om, OL, Fmin), Lmx)
 	Ls = np.linspace(Lmn,Lmx, Ntrap_L)
-	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
-
+	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([GWB_Integrand_GWgas_f(L, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - GWB_Integrand_GWgas_f(Lmn, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - GWB_Integrand_GWgas_f(Lmx, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) ) 
+	
 
 # def GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
 # 	MdEff = 0.1
@@ -503,11 +554,11 @@ def GWB_Trap_dz(zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, 
 	return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL(zs[0], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL(zs[Ntrap_z-1],  Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
 
 
-def GWB_Trap_dz_f(fGW, zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
-	zs = np.linspace(0.000001, zmax, Ntrap_z)
-	return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
-	#return (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
 
+def GWB_Trap_dz_f(fGW, zmax, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
+	zs = np.linspace(0.000001, zmax, Ntrap_z)
+	res = 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
+	return res
 
 # def GWB_Trap_dz_f(fGW, zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
 # 	zs = np.linspace(0.000001, zmax, Ntrap_z)
@@ -523,14 +574,12 @@ def IntzZ_Trap_GWB(p, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_E
 	return -hGWB
 
 
-
-def IntzZ_Trap_GWB_f(p, fGW, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL):
+def IntzZ_Trap_GWB_f(p, fGW, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL):
 	print p
 	eps, KQ = p
-	hGWB = np.sqrt(GWB_Trap_dz_f(fGW, zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL))
+	hGWB = np.sqrt(GWB_Trap_dz_f(fGW, zmax, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL))
 	print "hGWB=%g" %hGWB
 	return -hGWB
-
 
 
 

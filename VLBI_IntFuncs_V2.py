@@ -534,7 +534,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	#  Lmin comes in W so correct to erg/s here
 	
 
-	Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 	
 
 	#FF = fbin_GWgas(z, M, thMn, qmin, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
@@ -589,8 +589,8 @@ def smLF_Flat(Lmm, z, chi):
 
 	p0 = phi1 / ( (Lum408/ee2/Lstr)**Aa + (Lum408/ee2/Lstr)**Bb ) 
 
-	#return ee1 * p0 / Lum1p4/ee2 #div by L1p4 to put it into dN/dL not dN/DlogL
-	return ee1 * p0 /np.log(10.) ## in log L  is this Log or log10!!!! will be extra factor of ln10 !!
+	#return ee1 * p0 / Lum1p4/ee2 #div by L1p4 to put it into dN/dLdV not dN/DlogLdV
+	return ee1 * p0 /np.log(10.) ## in log L becuase we are integrating LogL is this Log or log10!!!! will be extra factor of ln10 !!
 
 def smLF_Steep(Lmm, z, chi):
 	#Lmm = Lmm/(10.**7) #put in SI for LF
@@ -624,7 +624,7 @@ def smLF_Steep(Lmm, z, chi):
 	#return ee1 * p0 / Lum1p4/ee2
 	return ee1 * p0 /np.log(10.) ## in lnL in Eq 8 of Yuan Wang +2016 so convert to per log10L
 
-def smLF(Lmm, z, chi):
+def smLF_old(Lmm, z, chi):
 	return smLF_Flat(Lmm, z, chi) + smLF_Steep(Lmm, z, chi)
 	#return smLF_Flat(Lmm, z, chi) ## FLat Spectrum are core dominated rather then jet dominated (https://ned.ipac.caltech.edu/level5/Cambridge/Cambridge1_3_1.html)
 	#return smLF_Steep(Lmm, z, chi)
@@ -637,6 +637,38 @@ def smLF(Lmm, z, chi):
 
 
 
+
+
+def smLF(Lmm, z, chi):
+	#https://arxiv.org/pdf/1708.03087.pdf
+	Lstar = 10.**(24.79)#10.**(24.79)
+	phi1 = 10.**(-4.72)#10.**(-4.72) ##this is phi0?
+	p1 = -1.29 ##SIGNS OF p1 nad p2 switched in YUAN PAPER!
+	p2 = 6.80
+	bet = 0.45 
+	gam = 0.31
+	zc= 0.78
+
+
+	p0 = (1./(1.+zc))**p1  +  (1./(1.+zc))**p2
+	e1 = p0 / ( ((1.+z)/(1.+zc))**p1 + ((1.+z)/(1.+zc))**p2 )
+
+	k2 = -0.16  ##k1 and k2 ARE BACKWARDS IN THE YAUN PAPER
+	k1 = 1.44
+	e2 = 10.**(k1*z + k2*z*z)
+
+
+	Lum408 = 10.**Lmm/chi
+	## do in d/dLogL for integration
+	L = Lum408/e2
+	rho = phi1/np.log(10.) * (L/Lstar)**(-bet) * np.exp(-(L/Lstar)**gam) 
+	return e1*rho
+
+
+
+def smLFdz(Lmm, z, chi):
+	dz = 0.0000001#z[0] - z[len(z)]/100.
+	return (smLF(Lmm, z+dz, chi) - smLF(Lmm, z, chi))/dz
 
 
 

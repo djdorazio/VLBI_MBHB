@@ -57,9 +57,9 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 2000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 2000.*10.**10*Msun
-Mmin= 10.**5*Msun 
+Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 20000.*10.**10*Msun
+Mmin= 0.**5*Msun 
 
 
 
@@ -120,7 +120,7 @@ NEHT_Z7 =np.zeros(Ng)
 
 thMns = np.linspace(1.0, thmin_max, Ng) 
 #Zs = [0.02, 0.05, 0.1, 0.5, 1.0]#, 2.0]
-Zs = [0.01, 0.05, 0.1, 1.0, 2.0]
+Zs = [0.01, 0.1, 1.0, 2.0, 3.0]
 #Zs = [0.01, 0.05, 0.1, 1.0, 1.5, 2.0, 2.5]
 
 

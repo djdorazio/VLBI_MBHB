@@ -41,11 +41,11 @@ CntPlt_CumZ = True
 CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = False
+Mmx_Pbase = True
 fEdd_Npc = False
 fEdd_Mdot = False
 Mdot_Npc = False
-qmin_Npc = True
+qmin_Npc = True 
 qmin_Mdot = False
 qmin_fEdd = False
 
@@ -80,9 +80,9 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 2.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 2.*10.**10*Msun
-Mmin= 10.**5*Msun 
+Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 20000.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun 
 
 
 
@@ -102,7 +102,7 @@ xi = 4.0
 
 
 #Accretion Params
-KQ = 10.**(-1.5) ## sets number of pc at which RL turns on
+KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
 eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
 
 if (Lmx==24.0):	
@@ -119,11 +119,11 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 zeval = 0.5  #eval at this z
-zmax = 3.0 ### integrateo out to zmax=5.0
+zmax = 10.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
 Fmin = 10.0 * mJy2cgs
-thMn = 20.0 * mu_as2rad 
+thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
 
@@ -138,7 +138,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 20
+	Ng = 10
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
@@ -483,6 +483,8 @@ if (CntPlt_CumZ):
 
 
 		if (fEdd_Dist):
+			Savename = 'Cumz_Pbase_vs_Mmx_fDistLLAGN_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
+
 			#plt.figtext(0.2,0.51, r"$\chi=%g$" %chi, color='yellow', fontsize=15)
 			#plt.figtext(0.15,0.52, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.47, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='yellow', fontsize=15)
@@ -492,7 +494,8 @@ if (CntPlt_CumZ):
 			plt.figtext(0.15,0.27, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
 			plt.figtext(0.15,0.22, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 		else:
-			#plt.figtext(0.2,0.51, r"$\chi=%g$" %chi, color='yellow', fontsize=15)
+			Savename = 'Cumz_Pbase_vs_Mmx_fdelta_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)	#plt.figtext(0.2,0.51, r"$\chi=%g$" %chi, color='yellow', fontsize=15)
+			
 			#plt.figtext(0.15,0.52, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.47, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.42, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
@@ -508,14 +511,14 @@ if (CntPlt_CumZ):
 		plt.tight_layout()
 
 
-		if (TrapInt):
-			if (Lmx==24.0):
-				Savename = 'Cumz_Pbase_vs_Mmx_LLAGN_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
-			else:
-				Savename = 'Cumz_Pbase_vs_Mmx_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
+		# if (TrapInt):
+		# 	if (Lmx==24.0):
+		# 		Savename = 'Cumz_Pbase_vs_Mmx_LLAGN_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
+		# 	else:
+		# 		Savename = 'Cumz_Pbase_vs_Mmx_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
 
-		else:
-			Savename = 'Cumz_Pbase_vs_Mmx_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_reclim%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, reclim)
+		# else:
+		# 	Savename = 'Cumz_Pbase_vs_Mmx_%gx%g_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_reclim%g.png'%(Ng,Ng, qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, reclim)
 
 		Savename = Savename.replace('.', 'p')
 		Savename = Savename.replace('ppng', '.png')
@@ -686,8 +689,11 @@ if (qmin_Npc):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, 10.**qmins[i], np.minimum(qmin_POP, 10.**qmins[i]), Pbase, f_Edd, xi, fbin, h, Om, OL))
 				
-				#RSGmx[i] = RSG(10.**epss[i], Mmax, MdEff)/pc2cm
-				#RSGmn[i] = RSG(10.**epss[i], Mmin, MdEff)/pc2cm
+
+				RSGmx[i] = RSGff(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
+				RSGmn[i] = RSGes(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
+				
+				
 		else:
 			for i in range(0,Ng):
 				for j in range(0,Ng):
@@ -723,6 +729,10 @@ if (qmin_Npc):
 		# plt.plot(qmins, np.log10(aTmx), color='green', linewidth=2, linestyle="--" )
 		# plt.plot(qmins, np.log10(aTmn), color='green', linewidth=2, linestyle="--" )
 
+		plt.plot(epss, np.log10(RSGmx), color='red' )
+		plt.plot(epss, np.log10(RSGmn), color='red' )
+		plt.fill_between(epss,np.log10(RSGmx),np.log10(RSGmn), color='red', alpha=0.1)
+
 
 		plt.axvline(x=0.0, color='black', linewidth=1, linestyle="--")
 
@@ -733,7 +743,7 @@ if (qmin_Npc):
 
 
 
-		ax.set_xlabel(r'$\rm{log}_{10}[q_{\rm{min}}]$')
+		ax.set_xlabel(r'$\rm{log}_{10}[q^{\rm{Emin}}_s]$')
 		#plt.ylabel(r'$\rm{log}_{10}[a_{\rm{max}}/\rm{pc}]$')
 		ax2.set_ylabel(r'$\rm{log}_{10}[a_{\rm{max}}/\rm{pc}]$')
 		ax.set_ylabel(r'$\rm{log}_{10}[\theta_{\rm{max}}/\mu\rm{as}]$')
@@ -749,12 +759,16 @@ if (qmin_Npc):
 
 
 		if (fEdd_Dist):
+			Savename = 'CumZ_Npc_vs_qmin_fdistLLAGN_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_Lmx%g_TrapInt%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, Lmx, Ntrap_z)
+			
 			plt.figtext(0.2,0.87, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.67, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 		else:
+			Savename = 'CumZ_Npc_vs_qmin_fdelta_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_Lmx%g_TrapInt%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, Lmx, Ntrap_z)
+
 			plt.figtext(0.15,0.87, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
@@ -772,10 +786,11 @@ if (qmin_Npc):
 		plt.tight_layout()
 
 
-		if (TrapInt):
-			Savename = 'CumZ_Npc_vs_qmin_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_TrapInt%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, Ntrap_z)
-		else:
-			Savename = 'CumZ_Npc_vs_qmin_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_reclim%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, reclim)
+		# if (TrapInt):
+		# 	Savename = 'CumZ_Npc_vs_qmin_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_Lmx%g_TrapInt%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, Lmx, Ntrap_z)
+		# else:
+		# 	Savename = 'CumZ_Npc_vs_qmin_%gx%g_Mdot%g_zmax%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_reclim%g.png'%(Ng,Ng, eps, zmax, FminSv, thMnSv, PbaseSv, reclim)
+		
 		Savename = Savename.replace('.', 'p')
 		Savename = Savename.replace('ppng', '.png')
 		plt.savefig(Savename)

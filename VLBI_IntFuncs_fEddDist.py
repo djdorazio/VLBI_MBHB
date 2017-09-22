@@ -17,8 +17,8 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 101 #25
-Ntrap_L = 61 #25
+Ntrap_z = 41 #25
+Ntrap_L = 41 #25
 
 Ntrp_P = 41.
 Ntrp_q = 41.
@@ -359,7 +359,7 @@ def pdf_fEdd(x, xmin, a, x0, sig):
  	return (2.*(1. + a)*(np.exp(-(-x + x0)**2/(2.*sig**2)) + (-x)**a)*(1. - step(x))* step(x - xmin))/((2.*(-xmin)**a*xmin + (1. + a)*np.sqrt(2*np.pi)*sig*(spc.erf((0.7071067811865475*x0)/sig) - spc.erf((0.7071067811865475*(x0 - xmin))/sig)))*step(-xmin)*(-1. + step(xmin)))
 
 def CDF_fEdd(xcum, xmin, a, x0, sig):
-	Nftrap = 51
+	Nftrap = 41
 	xs = np.linspace(xmin, xcum, Nftrap)
 	return np.trapz( pdf_fEdd(xs, xmin, a, x0, sig), xs  )
 
@@ -394,7 +394,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 		Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 		#NOTE THAT we could allow f_Edd to be eps above, but the frac LEdd that L is doesnt have to be linked to CBD accretion rat which drives migration
 		# Lmin comes in W so correct to erg/s here
-		Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+		#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 
 		return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 
@@ -494,7 +494,30 @@ def smLF(Lmm, z, chi):
 
 
 
+def smLF(Lmm, z, chi):
+	#https://arxiv.org/pdf/1708.03087.pdf
+	Lstar = 10.**(24.79)#10.**(24.79)
+	phi1 = 10.**(-4.72)#10.**(-4.72) ##this is phi0?
+	p1 = -1.29 ##SIGNS OF p1 nad p2 switched in YUAN PAPER!
+	p2 = 6.80
+	bet = 0.45 
+	gam = 0.31
+	zc= 0.78
 
+
+	p0 = (1./(1.+zc))**p1  +  (1./(1.+zc))**p2
+	e1 = p0 / ( ((1.+z)/(1.+zc))**p1 + ((1.+z)/(1.+zc))**p2 )
+
+	k2 = -0.16  ##k1 and k2 ARE BACKWARDS IN THE YAUN PAPER
+	k1 = 1.44
+	e2 = 10.**(k1*z + k2*z*z)
+
+
+	Lum408 = 10.**Lmm/chi
+	## do in d/dLogL for integration
+	L = Lum408/e2
+	rho = phi1/np.log(10.) * (L/Lstar)**(-bet) * np.exp(-(L/Lstar)**gam) 
+	return e1*rho
 
 
 
