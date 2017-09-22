@@ -74,29 +74,16 @@ mJy2cgs = 10.**(-26)
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
 
-###Cosmology
-h=0.7
-Om = 0.3
-OL=0.7
-
-
-Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 20000.*10.**10*Msun
-Mmin= 0.0*10.**5*Msun 
 
 
 
-###SED scaling
-chi  = 0.5 #Elvis 1994 Radio Loud AGN - nulnu propto nu^(0.9) and #0.1  #chi L_(408MHz) = L_mm (specifc fluxes)
 
 
 
-###DEFUNCT
-DZ = 1.0
 
-##FREE (and KEY) PARAMETERS
-##Overall pop params (keep 1)
-xi = 4.0
+
+
+
 
 
 
@@ -105,13 +92,14 @@ xi = 4.0
 KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
 eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
 
-if (Lmx==24.0):	
-	f_Edd = 0.0001
-	fbin = 1.00
-else:
-	f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
-	fbin = 1.0
-#f_Edd = 0.0001  ## LLAGN
+# if (Lmx==24.0):	
+# 	f_Edd = 0.0001
+# 	fbin = 1.00
+# else:
+# 	f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
+# 	fbin = 1.0
+
+f_Edd = 0.1  
 MdEff = 0.1
 
 ## binary pop params
@@ -125,6 +113,50 @@ zmax = 10.0 ### integrateo out to zmax=5.0
 Fmin = 10.0 * mJy2cgs
 thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###Cosmology
+h=0.7
+Om = 0.3
+OL=0.7
+
+
+
+
+###DEFUNCT
+Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 20000.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun 
+
+
+
+###SED scaling
+chi  = 0.5 #Elvis 1994 Radio Loud AGN - nulnu propto nu^(0.9) and #0.1  #chi L_(408MHz) = L_mm (specifc fluxes)
+
+
+
+###DEFUNCT
+DZ = 1.0
+##FREE (and KEY) PARAMETERS
+##Overall pop params (keep 1)
+xi = 4.0
+
+
+
+
+
 
 
 nuVbnd = c/(5.45*10**(-5))

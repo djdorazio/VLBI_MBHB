@@ -61,6 +61,56 @@ mJy2cgs = 10.**(-26)
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
 
+
+
+
+
+
+
+
+
+fbin = 1.0
+#Accretion Params
+KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
+eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
+f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
+MdEff = 0.1
+
+## binary pop params
+qmin_EHT = 0.01   ### qminof EHT sample
+qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
+
+zeval = 0.5  #eval at this z
+zmax = 10.0 ### integrateo out to zmax=5.0
+
+##Instrument params
+Fmin = 1.0 * mJy2cgs
+thMn = 1.0 * mu_as2rad 
+Pbase = 10.0*yr2sec
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###Cosmology
 h=0.7
 Om = 0.3
@@ -84,27 +134,7 @@ DZ = 1.0
 ##FREE (and KEY) PARAMETERS
 ##Overall pop params (keep 1)
 xi = 4.0 ##lifetime of Quasar = xi*tEdd
-fbin = 0.0001
 
-
-
-#Accretion Params
-KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
-eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
-MdEff = 0.1
-
-## binary pop params
-qmin_EHT = 0.01   ### qminof EHT sample
-qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
-
-zeval = 0.5  #eval at this z
-zmax = 10.0 ### integrateo out to zmax=5.0
-
-##Instrument params
-Fmin = 1.0 * mJy2cgs
-thMn = 1.0 * mu_as2rad 
-Pbase = 10.0*yr2sec
 
 
 nuVbnd = c/(5.45*10**(-5))

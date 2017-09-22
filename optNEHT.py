@@ -50,6 +50,50 @@ yr2sec = 3600.*24.*365.25
 mu_as2rad = ma.pi/180. / 3600. /10.**6
 mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz 
 
+
+
+
+
+
+
+
+
+
+##IMPORTANT PARAMS HERE
+fbin = 1.0
+Fmin = 10.0 * mJy2cgs
+qmin_EHT = 0.01   ### qminof EHT sample
+
+
+
+
+
+Pbase = 10.0*yr2sec
+KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
+qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
+
+eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
+f_Edd = 0.1 
+
+# if (Lmx==24.0):
+# 	f_Edd = 0.0001
+# 	fbin = 0.001
+# else:
+# 	f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
+# 	fbin = 0.1
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
 h=0.7
@@ -63,13 +107,15 @@ Mmin= 0.**5*Msun
 
 
 
+
+
 zmax = 3.0
 
 ##FREE (and KEY) PARAMETERS
 chi  = 0.5 #From power law estimate of Elvis 1994  Radio Loud AGN (3e11/0.408e9)^(0.9-1.0)
 #chi = 1./0.12  #chi L_14 = L_mm (specific Lums) 1.0 for blazars, 1./0.12 for Sgr A*
 # for Sgr A*, nuLnu \propto nu^(1.4) (Loeb Waxman 2007) 
-fbin = 1.0
+
 
 MdEff = 0.1
 xi = 1.0
@@ -78,23 +124,10 @@ DZ = 1.0
 thMn = 1.0 * mu_as2rad 
 
 
-##IMPORTANT PARAMS HERE
-Fmin = 10.0 * mJy2cgs
-qmin_EHT = 0.01   ### qminof EHT sample
 
 
-Pbase = 10.0*yr2sec
-KQ = 10.**(-1.5)  #0.01 ## sets number of pc at which RL turns on
-qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
-eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
 
-if (Lmx==24.0):
-	f_Edd = 0.0001
-	fbin = 0.001
-else:
-	f_Edd = 1.0  ## sets L to M connection (accretion rate onto shining BH)
-	fbin = 0.1
 
 #tsts = 400
 #NEHT_tst = np.zeros(tsts)
