@@ -215,8 +215,8 @@ plt.savefig(Savename)
 
 
 
-Nh = 10
-Ntrial = 10
+Nh = 40
+Ntrial = 40
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
 

@@ -17,8 +17,8 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 41 #25
-Ntrap_L = 41 #25
+Ntrap_z = 201 #25
+Ntrap_L = 101 #25
 
 Ntrp_P = 41.
 Ntrp_q = 41.

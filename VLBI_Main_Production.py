@@ -138,7 +138,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 10
+	Ng = 20
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
