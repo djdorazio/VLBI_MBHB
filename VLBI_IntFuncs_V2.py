@@ -534,7 +534,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	#  Lmin comes in W so correct to erg/s here
 	
 
-	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+	Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 	
 
 	#FF = fbin_GWgas(z, M, thMn, qmin, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)

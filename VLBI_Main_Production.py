@@ -21,7 +21,7 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 
 if (fEdd_Dist):
@@ -42,9 +42,9 @@ CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
 Mmx_Pbase = True
-fEdd_Npc = True
+fEdd_Npc = False
 fEdd_Mdot = False
-Mdot_Npc = True
+Mdot_Npc = False
 qmin_Npc = True
 qmin_Mdot = False
 qmin_fEdd = False
@@ -136,8 +136,8 @@ OL=0.7
 
 
 ###DEFUNCT
-Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 20000.*10.**10*Msun
+Mmx = 2000000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 2000000.*10.**10*Msun
 Mmin= 0.0*10.**5*Msun 
 
 

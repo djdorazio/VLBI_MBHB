@@ -61,7 +61,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 ##IMPORTANT PARAMS HERE
 fbin = 1.0
-Fmin = 10.0 * mJy2cgs
+Fmin = 10000.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
 
@@ -334,8 +334,10 @@ if (logN):
 	plt.scatter(thMns, np.log10(NEHT_Z7), color='#a6761d')
 	p7 = plt.plot(thMns, np.log10(NEHT_Z7), color='#a6761d', linewidth=3, linestyle='--', alpha=opac)
 
-	plt.ylim(-3.0, 3.0)
-
+	if (fEdd_Dist==False):
+		plt.ylim(-3.0, 3.0)
+	else:
+		plt.ylim(-3.0, 5.0)
 
 
 
@@ -404,26 +406,32 @@ plt.xlim(thMns[0], thMns[Ng-1])
 plt.tight_layout()
 
 
-if (TrapInt):
-	if (Lmx==24.0):
-		plt.title("LLAGN")
-		if (logN):
-			Savename = "log10NEHTmax_vs_thMn_LLAGN_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
-		else:
-			Savename = "NEHTmax_vs_thMn_LLAGN_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
-	else:
-		if (logN):
-			Savename = "log10NEHTmax_vs_thMn_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
-		else:
-			Savename = "NEHTmax_vs_thMn_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
-else:
-	if (logN):
-		Savename = "log10NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
-	else:
-		Savename = "NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
 
 if (fEdd_Dist):
-	Savename = Savename+ "_LLAGN_fDist_"
+	Savename = "log10NEHTmax_vs_thMn_LLAGNfdist_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+else:
+	Savename = "log10NEHTmax_vs_thMn_fdelt_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+
+
+# if (TrapInt):
+# 	if (Lmx==24.0):
+# 		plt.title("LLAGN")
+# 		if (logN):
+# 			Savename = "log10NEHTmax_vs_thMn_LLAGN_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+# 		else:
+# 			Savename = "NEHTmax_vs_thMn_LLAGN_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+# 	else:
+# 		if (logN):
+# 			Savename = "log10NEHTmax_vs_thMn_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+# 		else:
+# 			Savename = "NEHTmax_vs_thMn_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+# else:
+# 	if (logN):
+# 		Savename = "log10NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+# 	else:
+# 		Savename = "NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+
+
 
 Savename = Savename.replace('.', 'p')
 Savename = Savename.replace('ppng', '.png')

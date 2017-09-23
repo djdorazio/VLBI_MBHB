@@ -394,7 +394,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 		Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 		#NOTE THAT we could allow f_Edd to be eps above, but the frac LEdd that L is doesnt have to be linked to CBD accretion rat which drives migration
 		# Lmin comes in W so correct to erg/s here
-		#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+		Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 
 		return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 
