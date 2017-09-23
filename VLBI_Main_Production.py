@@ -97,8 +97,8 @@ eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two toge
 # 	fbin = 1.00
 # else:
 # 	f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
-# 	fbin = 1.0
 
+fbin = 1.0
 f_Edd = 0.1  
 MdEff = 0.1
 
