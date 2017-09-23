@@ -61,7 +61,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 ##IMPORTANT PARAMS HERE
 fbin = 1.0
-Fmin = 10000.0 * mJy2cgs
+Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
 
@@ -138,7 +138,7 @@ pnoFit = [eps, KQ]
 
 thmin_max = 20.0
 Nz = 5
-Ng = int(1.*thmin_max)/2
+Ng = int(1.*thmin_max)/1
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)
@@ -377,7 +377,7 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
-plt.figtext(0.57,0.89, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
+plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
@@ -471,7 +471,7 @@ plt.plot(thMns, np.log10(NEHT_Z5/Ntot_Z5), color='gray', linewidth=3, linestyle=
 FminSv = Fmin/mJy2cgs/1000.
 thMnSv = thMn/mu_as2rad 
 PbaseSv = Pbase/yr2sec
-plt.figtext(0.73,0.86, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
+plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
