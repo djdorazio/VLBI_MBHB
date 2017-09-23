@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -421,6 +421,10 @@ else:
 		Savename = "log10NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
 	else:
 		Savename = "NEHTmax_vs_thMn_reclim%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(reclim, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+
+if (fEdd_Dist):
+	Savename = Savename+ "_LLAGN_fDist_"
+
 Savename = Savename.replace('.', 'p')
 Savename = Savename.replace('ppng', '.png')
 plt.savefig(Savename)
