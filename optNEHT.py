@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -63,8 +63,6 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 fbin = 1.0
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
-
-
 
 
 
@@ -109,7 +107,7 @@ Mmin= 0.**5*Msun
 
 
 
-zmax = 3.0
+zmax = 10.0
 
 ##FREE (and KEY) PARAMETERS
 chi  = 0.5 #From power law estimate of Elvis 1994  Radio Loud AGN (3e11/0.408e9)^(0.9-1.0)
@@ -377,16 +375,16 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
-plt.figtext(0.57,0.87, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
-plt.figtext(0.57,0.82, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
-plt.figtext(0.57,0.77, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
-plt.figtext(0.57,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
-plt.figtext(0.57,0.67, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-plt.figtext(0.57,0.62, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+plt.figtext(0.57,0.9, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
+plt.figtext(0.57,0.85, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+plt.figtext(0.57,0.8, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+plt.figtext(0.57,0.75, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+plt.figtext(0.57,0.7, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+plt.figtext(0.57,0.65, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
 #plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
 
 
-plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.58), fontsize=14)
+plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.69), fontsize=14)
 
 #plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0], p6[0], p7[0] ], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4],"z=%g"%Zs[5],"z=%g"%Zs[6]), (0.76,0.58), fontsize=14)
 

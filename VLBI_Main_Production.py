@@ -21,7 +21,7 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 
 if (fEdd_Dist):
@@ -41,11 +41,11 @@ CntPlt_CumZ = True
 CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
-fEdd_Npc = False
+Mmx_Pbase = False
+fEdd_Npc = True
 fEdd_Mdot = False
 Mdot_Npc = False
-qmin_Npc = True 
+qmin_Npc = False
 qmin_Mdot = False
 qmin_fEdd = False
 
@@ -306,7 +306,7 @@ if (CntPlt_CumZ):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  np.maximum(1.e-3,-IntzZ_Trap_OptNEHT([eps, 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, 10.**fEdds[i], xi, fbin, h, Om, OL))
-					hGWB_grid[j][i] =  -IntzZ_Trap_GWB_f([eps,  10.**KQs[j]], fPTA, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, 10.**fEdds[i], xi, fbin, h, Om, OL)
+					hGWB_grid[j][i] =  -IntzZ_Trap_GWB_f([eps,  10.**KQs[j]], fPTA, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, 10.**fEdds[i], xi, fbin, h, Om, OL)
 
 
 				
