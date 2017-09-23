@@ -334,7 +334,7 @@ if (logN):
 	plt.scatter(thMns, np.log10(NEHT_Z7), color='#a6761d')
 	p7 = plt.plot(thMns, np.log10(NEHT_Z7), color='#a6761d', linewidth=3, linestyle='--', alpha=opac)
 
-	#plt.ylim(-1.0, 4.0)
+	plt.ylim(-3.0, 3.0)
 
 
 
@@ -366,7 +366,7 @@ else:
 	plt.scatter(thMns, NEHT_Z7, color='#a6761d')
 	p7 = plt.plot(thMns, NEHT_Z7, color='#a6761d', linewidth=3, linestyle='--', alpha=opac)
 
-	#plt.ylim(0.0, 4.0)
+	#plt.ylim(-3.0, 3.0)
 
 plt.axhline(0.0, linestyle=":", color="black")
 
@@ -375,16 +375,16 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
-plt.figtext(0.57,0.9, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
-plt.figtext(0.57,0.85, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
-plt.figtext(0.57,0.8, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
-plt.figtext(0.57,0.75, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
-plt.figtext(0.57,0.7, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-plt.figtext(0.57,0.65, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+plt.figtext(0.57,0.89, r"$q^{\rm{EHT}}_{\rm{min}}=%g$" %qmin_EHT, color='black', fontsize=14)
+plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
 #plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
 
 
-plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.69), fontsize=14)
+plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.68), fontsize=14)
 
 #plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0], p6[0], p7[0] ], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4],"z=%g"%Zs[5],"z=%g"%Zs[6]), (0.76,0.58), fontsize=14)
 
