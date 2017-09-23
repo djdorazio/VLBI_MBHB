@@ -263,7 +263,7 @@ hoff_10 = np.zeros(Nh)
 hGW = hPTA * (10.**fPTAs/(fPTA))**(-2./3)
 #hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
 if (fEdd_Dist==True):
-	fbin = 0.001
+	fbin = 0.01
 	for i in range(Nh):	
 		for j in range(Ntrial):
 			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
