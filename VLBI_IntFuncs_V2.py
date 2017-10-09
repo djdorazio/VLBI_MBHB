@@ -16,13 +16,13 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 201 #25
-Ntrap_L = 101 #25
+Ntrap_z = 81 #25
+Ntrap_L = 81 #25
 
 Ntrp_P = 41.
 Ntrp_q = 41.
 
-Lmx = 31.0#10.*30
+Lmx = 32.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
@@ -423,16 +423,19 @@ def FNum_nmr(z, M, thMn, qmin, eps, Pbase, MdEff, xi, KQ, h, Om, OL):
 	Pbase = np.minimum(Pbase, 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z))
 
 
-	PMin = PminRes(M, thmn, z, h, Om, OL)
-	Pbase = np.maximum(Pbase, PMin*(1.+z))	
-	PIsco = 2.*np.pi * (6.)**(1.5) *G*M/c/c/c
+	
+	
+	#PIsco = 2.*np.pi * (6.)**(1.5) *G*M/c/c/c
+	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
+	PMin = np.maximum(PminRes(M, thmn, z, h, Om, OL), PIsco) ##rest frame
+	#Pbase = np.maximum(Pbase, PMin*(1.+z))	  ##obs frame
 
-	if (Pbase<=PMin*(1.+z) or qmin>=1.0 or PMin<PIsco):
+	if (Pbase<=PMin*(1.+z) or qmin>=1.0):
 		return 0.0
 	else:
 
 		
-		Ps  = np.linspace(PMin, Pbase/(1.+z), Ntrp_P)
+		Ps  = np.linspace(PMin, Pbase/(1.+z), Ntrp_P) ##integrate in rest frame
 		qss = np.linspace(qmin, 1.0, Ntrp_q)
 
 		Ivar = np.meshgrid(Ps, qss) 

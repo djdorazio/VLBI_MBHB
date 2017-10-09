@@ -60,7 +60,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 
 ##IMPORTANT PARAMS HERE
-fbin = 1.0
+fbin = 0.01
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
@@ -99,8 +99,8 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 20000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 20000.*10.**10*Msun
+Mmx = 2000000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
+Mmax = 2000000.*10.**10*Msun
 Mmin= 0.**5*Msun 
 
 
@@ -136,9 +136,9 @@ p0 = [zeval, eps, KQ]
 #if not fitting:
 pnoFit = [eps, KQ]
 
-thmin_max = 20.0
+thmin_max = 40.0
 Nz = 5
-Ng = int(1.*thmin_max)/1
+Ng = int(1.*thmin_max)/2
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)
@@ -151,7 +151,7 @@ NEHT_Z7 =np.zeros(Ng)
 
 thMns = np.linspace(1.0, thmin_max, Ng) 
 #Zs = [0.02, 0.05, 0.1, 0.5, 1.0]#, 2.0]
-Zs = [0.01, 0.1, 1.0, 2.0, 3.0]
+Zs = [0.01, 0.1, 0.5, 1.0, 2.0]
 #Zs = [0.01, 0.05, 0.1, 1.0, 1.5, 2.0, 2.5]
 
 
@@ -377,13 +377,21 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
-plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
-plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
-plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
-plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
-plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
-#plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
+
+if (fEdd_Dist):
+	plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+	plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+else:
+	plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+	plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+	plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+	#plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
 
 
 plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.68), fontsize=14)
@@ -471,12 +479,20 @@ plt.plot(thMns, np.log10(NEHT_Z5/Ntot_Z5), color='gray', linewidth=3, linestyle=
 FminSv = Fmin/mJy2cgs/1000.
 thMnSv = thMn/mu_as2rad 
 PbaseSv = Pbase/yr2sec
-plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
-plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
-plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
-plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
-plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-plt.figtext(0.73,0.61, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+
+if (fEdd_Dist):
+	plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+	plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+	plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+else:
+	plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
+	plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
+	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
+	plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+	plt.figtext(0.73,0.61, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
 
 
 # plt.figtext(0.2,0.26, r"$\eta^{\rm{bf}}=%g$" %popt[3], color='black', fontsize=14)

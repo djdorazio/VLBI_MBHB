@@ -17,8 +17,8 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 201 #25
-Ntrap_L = 101 #25
+Ntrap_z = 81 #25
+Ntrap_L = 81 #25
 
 Ntrp_P = 41.
 Ntrp_q = 41.
@@ -591,7 +591,7 @@ def GWB_Trap_dz_f(fGW, zmax, Mmx, eps, MdEff, f_Edd, KQ, Fmin, chi, thMn, qmin_E
 	# 	print "negative z integral?"
 	# 	print res
 	
-	return res#np.fabs(res)
+	return np.fabs(res)
 	
 
 	#return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([GWB_Trap_dL_f(z, fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - GWB_Trap_dL_f(zs[0], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - GWB_Trap_dL_f(zs[Ntrap_z-1], fGW, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )

@@ -43,11 +43,12 @@ CntPlt_DZ = False
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
 Mmx_Pbase = True
 fEdd_Npc = False
-fEdd_Mdot = False
 Mdot_Npc = False
 qmin_Npc = True
+
 qmin_Mdot = False
 qmin_fEdd = False
+fEdd_Mdot = False
 
 
 if (fEdd_Dist):
@@ -70,6 +71,10 @@ yr2sec = 3600.*24.*365.25
 
 mu_as2rad = ma.pi/180. / 3600. /10.**6
 mJy2cgs = 10.**(-26)
+
+
+
+
 
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
