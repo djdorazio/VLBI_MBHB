@@ -384,6 +384,7 @@ if (fEdd_Dist):
 	plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+	plt.figtext(0.57,0.64, r"$f_{\rm{bin}}=%g$ pc" %fbin, color='gray', fontsize=14)
 else:
 	plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
@@ -391,6 +392,8 @@ else:
 	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
 	plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+	plt.figtext(0.57,0.59, r"$f_{\rm{bin}}=%g$ pc" %fbin, color='gray', fontsize=14)
+
 	#plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
 
 
@@ -486,6 +489,8 @@ if (fEdd_Dist):
 	plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
+	plt.figtext(0.57,0.61, r"$f_{\rm{bin}}=%g$ pc" %fbin, color='gray', fontsize=14)
+
 else:
 	plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
@@ -493,6 +498,8 @@ else:
 	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
 	plt.figtext(0.73,0.61, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+	plt.figtext(0.57,0.56, r"$f_{\rm{bin}}=%g$ pc" %fbin, color='gray', fontsize=14)
+
 
 
 # plt.figtext(0.2,0.26, r"$\eta^{\rm{bf}}=%g$" %popt[3], color='black', fontsize=14)
