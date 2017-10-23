@@ -448,15 +448,15 @@ if (CntPlt_CumZ):
 					for j in range(0,Ng):		
 						Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, KQ], zmax, 10.**Mmxz[i], Fmin, chi, thMn, qmin_EHT, qmin_POP, 10.**Pbasez[j]*yr2sec, f_Edd, xi, fbin, h, Om, OL))
 						aseps[j][i] = asep(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun)/pc2cm
-						ttots_mn[j][i] = t_tot(KQ*pc2cm, 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec*Pbasez[j]/Pbasez[j]
-						ttots_mx[j][i] = t_tot(KQ*pc2cm, 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec*Pbasez[j]/Pbasez[j]
+						ttots_mn[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec
+						ttots_mx[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec
 			else:
 				for i in range(0,Ng):
 					for j in range(0,Ng):		
 						Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, KQ], zmax, 10.**Mmxz[i], Fmin, chi, thMn, qmin_EHT, qmin_POP, 10.**Pbasez[j]*yr2sec, f_Edd, xi, fbin, h, Om, OL))
 						aseps[j][i] = asep(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun)/pc2cm
-						ttots_mn[j][i] = t_tot(KQ*pc2cm, 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec*Pbasez[j]/Pbasez[j]
-						ttots_mx[j][i] = t_tot(KQ*pc2cm, 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec*Pbasez[j]/Pbasez[j]
+						ttots_mn[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec
+						ttots_mx[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec
 
 
 
