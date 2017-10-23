@@ -725,7 +725,8 @@ if (qmin_Npc):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, 10.**qmins[i], np.minimum(qmin_POP, 10.**qmins[i]), Pbase, f_Edd, xi, fbin, h, Om, OL))
-				
+					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**8.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
+
 
 				RSGmx[i] = RSGff(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
 				RSGmn[i] = RSGes(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
@@ -735,7 +736,8 @@ if (qmin_Npc):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_OptNEHT([10.**epss[i], 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, 10.**qmins[i], np.minimum(qmin_POP, 10.**qmins[i]), Pbase, f_Edd, xi, fbin, h, Om, OL))
-				
+					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**8.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
+
 				#RSGmx[i] = RSG(10.**epss[i], Mmax, MdEff)/pc2cm
 				#RSGmn[i] = RSG(10.**epss[i], Mmin, MdEff)/pc2cm
 				#aTmx[i] = aTrans(Mmax, qsofq(10**qmins), MdEff, 10.**epss[i])/pc2cm
@@ -777,6 +779,11 @@ if (qmin_Npc):
 		plt.axvline(x=np.log10(qmin_EHT), color='chartreuse', linewidth=2, linestyle="--")
 		plt.axhline(y=np.log10(KQ), color='chartreuse', linewidth=2, linestyle="--")
 		plt.scatter(np.log10(qmin_EHT), np.log10(KQ), color='chartreuse', marker='o', s=30)
+
+		lmsmn = plt.contour(qmins, KQs, np.log10(ttots_mn), colors="white", levels = [6.0, 7.0, 8.0])
+		plt.clabel(lmsmn, fmt = r'$10^{%g}$', colors="white", fontsize=12, linestyle='--')	
+
+
 
 
 
