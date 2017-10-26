@@ -41,7 +41,7 @@ CntPlt_CumZ = True
 CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
+Mmx_Pbase = False
 fEdd_Npc = False
 Mdot_Npc = False
 qmin_Npc = True
@@ -712,7 +712,8 @@ if (CntPlt_CumZ):
 if (qmin_Npc):
 
 		## CONTOUR PLOT TOTALs
-
+		ttots_mn = np.zeros([Ng,Ng])
+		ttots_mx = np.zeros([Ng,Ng])
 		Ntot_grid = np.zeros([Ng,Ng])
 		Ftot_grid = np.zeros([Ng,Ng])
 		RSGmx = np.zeros(Ng)
