@@ -320,8 +320,8 @@ def tres_int(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 
 	Tres = P*0.0#
 	
-	for i in range(Ntrp_P):
-		for j in range(Ntrp_q):
+	for i in range(Ntrp_q):
+		for j in range(Ntrp_P):
 	#	for j in range(Ntrap_L):
 		#print asep(P[i],M)/2.
 		#if (nu_SSA(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
