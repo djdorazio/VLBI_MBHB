@@ -20,7 +20,7 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 
 if (fEdd_Dist):
@@ -116,8 +116,11 @@ Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 
 #### Shade region that is bright enough
-def Flxnu(z, Mbn, f_Edd, h, Om, OL, Fmin):
-	Fmm = Mbn2Lmm(Mbn, f_Edd)/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+def Flxnu(z, Mbn, f_Edd, h, Om, OL, Fmin, fEdd_Dist):
+	if (fEdd_Dist):
+		Fmm = Mbn2Lmm(Mbn)/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+	else:
+		Fmm = Mbn2Lmm(Mbn, f_Edd)/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 	if (Fmm>=Fmin):
 		return 0.0
 	else:
@@ -125,7 +128,13 @@ def Flxnu(z, Mbn, f_Edd, h, Om, OL, Fmin):
 
 
 def asep_bnd(P, M, z, thmn, h, Om, OL, Pbase):
-	if (asep(P, M) >= thmn*Dang(z, h, Om, OL)and P<Pbase):
+
+	Npc = KQ*pc2cm
+	Pbase = np.minimum(Pbase, 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z))
+	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M) 
+	PMin = np.maximum(PminRes(M, thmn, z, h, Om, OL), PIsco) ##rest frame
+
+	if (asep(P, M) >= thmn*Dang(z, h, Om, OL) and Pbase>PMin*(1.+z) and P*(1.+z)<=Pbase):
 		return 0.0
 	else:
 		return 1.0
@@ -137,12 +146,12 @@ def nubnd(P, M, z, fEdd, thobs, gamj, ke, Delc, Lam):
 		return 1.0
 
 
-ztst=0.2
+ztst=1.0
 
 if (fEdd_Dist):
 	Ng = 20
 else:
-	Ng = 100
+	Ng = 40
 sumz = 200
 Pbasez = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), Ng)
 Mbnz = np.linspace(5.0, 11.5, Ng)
@@ -164,19 +173,20 @@ if (fEdd_Dist):
 		for i in range(0,Ng):
 			for j in range(0,Ng):
 				Int_grid[j][i] =  Int_grid[j][i] + Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun))-7., ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-
+				Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
 	Int_grid = Int_grid/sumz
+	Flxmns = Flxmns/sumz
 else:		
 	for i in range(0,Ng):
 		for j in range(0,Ng):
 			Int_grid[j][i] = Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun, f_Edd))-7., ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-			
+			Flxmns[j][i]   = Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+
 Int_grid = 4.*np.pi*ztst*np.log10(1.e44/(c/0.1)) * Int_grid
 
 
 for i in range(0,Ng):
 		for j in range(0,Ng):
-			Flxmns[j][i]   = Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin)
 			abnds[j][i]    = asep_bnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, thMn, h, Om, OL, Pbase)
 			nubnds[j][i]   = nubnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
 
@@ -191,13 +201,13 @@ for i in range(0,Ng):
 
 	
 
-plt.figure(figsize=[7.5,6.1])
+plt.figure(figsize=[7.5,6.6])
 
 # if (fEdd_Dist):
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g$" %(ztst))
 # else:
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g, $f_{\rm{Edd}} = 10^{%g}}$" %(ztst,np.log10(f_Edd)), fontsize=14)
-plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$")
+plt.title(r"$\frac{d^2N}{dL dz}\Delta L\Delta z \mathcal{F}$", fontsize=15)
 
 ### integrand contours
 cnt = plt.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
@@ -245,7 +255,7 @@ plt.xlabel(r'$\rm{log}_{10}[M/M_{\odot}]$')
 
 plt.tight_layout()
 
-Savename = "diffN_fEddDist%g_zeval%g_fEdd%g.png" %(fEdd_Dist, ztst, f_Edd)
+Savename = "diffN_fEddDist%g_zeval%g_fEdd%g_amx%g.png" %(fEdd_Dist, ztst, f_Edd, KQ)
 
 Savename = Savename.replace('.', 'p')
 Savename = Savename.replace('ppng', '.png')

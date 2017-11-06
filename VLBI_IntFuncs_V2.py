@@ -25,11 +25,11 @@ Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 181 #25
-Ntrap_L = 181 #25
+Ntrap_z = 161 #25
+Ntrap_L = 161 #25
 
-Ntrp_P = 81
-Ntrp_q = 41
+Ntrp_P = 61
+Ntrp_q = 31
 
 Lmx = 32.0#10.*30
 #Lmx = 25.0 ##LLAGN
@@ -454,10 +454,10 @@ def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
 	##DO WE WANT REST FRAME ASEP??
 	##CANT DO IF STATEMENT need MINS?
-	Ps  = np.linspace(0.0, 1.0, Ntrp_P) ##integrate in rest frame
-	qss = np.linspace(0.0, 1.0, Ntrp_q)
+	#xs  = np.linspace(0.0, 1.0, Ntrp_P) ##integrate in rest frame
+	#ys = np.linspace(0.0, 1.0, Ntrp_q)
 
-	Ivar = np.meshgrid(Ps, qss)[0]
+	Tres = P*0.0#jsut give it the right shape
 	
 	for i in range(Ntrp_P):
 		for j in range(Ntrp_q):
@@ -467,19 +467,19 @@ def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
 				#res.append(0.0)
 				#Ivar[i][j]=0.0 #* P[i][j]
-				Ivar[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
 
 				#print "mm-emission region too big mang"
-			else:
+			#else:
 				#res.append(np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd )
 				#return np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
-				Ivar[i][j] = 0.0
+			#	Tres[i][j] = 0.0
 
 				#TESTING
 				#return fGas_int(qs, eps)/tEdd 
 				#return fGW_int(P[i][j], qs, M)/tEdd 
 	#return np.array(res)
-	return Ivar
+	return Tres
 	
 	#return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
 
@@ -507,7 +507,7 @@ def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 	Pbase = np.minimum(Pbase, 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z))
 
 	#PIsco = 2.*np.pi * (6.)**(1.5) *G*M/c/c/c
-	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
+	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M) 
 	PMin = np.maximum(PminRes(M, thmn, z, h, Om, OL), PIsco) ##rest frame
 	#Pbase = np.maximum(Pbase, PMin*(1.+z))	  ##obs frame
 
