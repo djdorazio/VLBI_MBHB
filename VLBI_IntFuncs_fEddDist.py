@@ -19,7 +19,7 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 nummGHz = c/0.1/1.e9 ##1mm in GHz
 thobs = 0.1 ##Eval at thobs such that nu_SSA is max, most conservative?
 gamj = 10. ##typical, maybe high
-ke = 1 #constant order unity
+ke = 1.0 #constant order unity
 Delc = np.log(1.e5) ##COul log of rmax/rmin
 Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
@@ -33,7 +33,7 @@ Ntrap_L = 181 #25
 Ntrp_P = 81
 Ntrp_q = 41
 
-Lmx = 31.0#10.*30
+Lmx = 32.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
@@ -248,32 +248,26 @@ def Dopj(gamj, thobs):
 	return 1./(gamj*(1. - betj(gamj)*np.cos(thobs)))
 
 def L44(fEdd, M, ke, Delc, Lam):
-	return LEdd_Fac*M/10.**(44) * ( Delc*(1 + 2/3*ke*Lam) )
+	return fEdd*LEdd_Fac*M/10.**(44) * ( Delc*(1. + 2./3.*ke*Lam) )
 
 #rob in pc
 def nu_SSA(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
 	# From mathemaetica notebook "mmemissregion_critera"
-	return (3.*ke**0.3333333333333333*(Dopj(gamj,thobs))**0.6666666666666666*(L44(fEdd,M,ke,Delc,Lam))**0.6666666666666666*(np.sin(thobs))**0.6666666666666666)/(gamj**0.3333333333333333*(Delc*(1. + (2.*ke*Lam)/3.))**0.6666666666666666*rob*(1. + z)* (betj(gamj))**0.6666666666666666)  
-
-#rob in pc
-# def Prd_SSA(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
-# 	# From mathemaetica notebook "mmemissregion_critera"
-# 	return np.array(  (3.*ke**0.3333333333333333*(Dopj(gamj,thobs))**0.6666666666666666*(L44(fEdd,M,ke,Delc,Lam))**0.6666666666666666*(np.sin(thobs))**0.6666666666666666)/(gamj**0.3333333333333333*(Delc*(1. + (2.*ke*Lam)/3.))**0.6666666666666666*rob*(1. + z)* (betj(gamj))**0.6666666666666666)  )
-
-
+	#return (3.*ke**0.3333333333333333*(Dopj(gamj,thobs))**0.6666666666666666*(L44(fEdd,M,ke,Delc,Lam))**0.6666666666666666*(np.sin(thobs))**0.6666666666666666)/(gamj**0.3333333333333333*(Delc*(1. + (2.*ke*Lam)/3.))**0.6666666666666666*rob*(1. + z)* (betj(gamj))**0.6666666666666666)  
+	return 3./(1.+z) * ke**(1./3.) * (Delc*(1.+2./3.*ke*Lam))**(-2./3.) * gamj**(-4./3.) * betj(gamj)**(-2./3.) * Dopj(gamj,thobs)**(2./3.) * ((1./gamj)/np.sin(thobs) )**(-1.) * np.sin(thobs)**(-1./3.) * (L44(fEdd,M,ke,Delc,Lam))**(2./3.) / rob
 
 #rob in pc
 def BofL(L44, rob, fEdd, M, thobs, gamj, ke, Delc, Lam): ##all in cgs -> Gauss
 	# From mathemaetica notebook "mmemissregion_critera"
-	return (20000000000000000000000.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
+	#return (20000000000000000000000.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
+	#return (2.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
+	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44)
+
 
 def nu_loss(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
 	# From mathemaetica notebook "mmemissregion_critera"
-	return 0.07/(1. + z)* gamj**(2.)*(betj(gamj))**(2.)*(Dopj(gamj, thobs))/np.sin(thobs)/(BofL(L44(fEdd, M, ke, Delc, Lam), 1, fEdd, M, thobs, gamj, ke, Delc, Lam))**3 * rob   ##this is B at 1pc as per Eqn 21 BK79
-
-# def Prd_loss(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
-# 	# From mathemaetica notebook "mmemissregion_critera"
-# 	return np.array( 0.07/(1. + z)* gamj**(2.)*(betj(gamj))**(2.)*(Dopj(gamj, thobs))/np.sin(thobs)/(BofL(L44(fEdd, M, ke, Delc, Lam), 1, fEdd, M, thobs, gamj, ke, Delc, Lam))**3 * rob  ) ##this is B at 1pc as per Eqn 21 BK79
+	#return 0.07/(1. + z)* gamj**(2.)*(betj(gamj))**(2.)*(Dopj(gamj, thobs))/np.sin(thobs)/(BofL(L44(fEdd, M, ke, Delc, Lam), 1, fEdd, M, thobs, gamj, ke, Delc, Lam))**3 * rob   ##this is B at 1pc as per Eqn 21 BK79
+	return 0.07/(1.+z) * gamj**2. * betj(gamj)**2. * Dopj(gamj, thobs)/np.sin(thobs) * (BofL(L44(fEdd, M, ke, Delc, Lam), 1.0, fEdd, M, thobs, gamj, ke, Delc, Lam))**(-3.) * rob
 
 
 
@@ -284,35 +278,70 @@ def fGW_int(P, qs, M):
 	return etaGW * M**(-5./3.) * P**(8./3.) * qs**(-1.) 
 
 
-def fGas_int(qs, MdEff, eps):
+def fGas_int(qs, eps):
 	# MEdd = LEdd_Fac/(MdEff*c*c)
 	# tEdd = 1./MEdd
 
 	# eps = eps/tEdd
 	return qs/(4.*eps)  ## eps passed here is eps/tEdd
 
+# def tres_int(P, qs, M, MdEff, eps, fEdd, tEdd, z):
+# 	##Check if emission region is larger than binary orbit, if so make tres=0
+# 	##DO WE WANT REST FRAME ASEP??
+# 	##CANT DO IF STATEMENT need MINS?
+# 	#res=[]
+# 	for i in range(Ntrp_P):
+# 		for j in range(Ntrp_q):
+# 	#	for j in range(Ntrap_L):
+# 		#print asep(P[i],M)/2.
+# 		#if (nu_SSA(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
+# 			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
+# 				#res.append(0.0)
+# 				return 0.0*P[i][j]
+# 				print "mm-emission region too big mang"
+# 			else:
+# 				return np.minimum( fGW_int(P[i][j], qs, M), fGas_int(qs, eps))/tEdd 
+# 				#TESTING
+# 				#return fGas_int(qs, eps)/tEdd 
+# 				#return fGW_int(P[i][j], qs, M)/tEdd 
+
+
+
+# 				#res.append( np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd )
+				
+# 			# return np.array(res)
+		
+
 def tres_int(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
 	##DO WE WANT REST FRAME ASEP??
 	##CANT DO IF STATEMENT need MINS?
-	#res=[]
+	Ps  = np.linspace(0.0, 1.0, Ntrp_P) ##integrate in rest frame
+	qss = np.linspace(0.0, 1.0, Ntrp_q)
+
+	Ivar = np.meshgrid(Ps, qss)[0]
+	
 	for i in range(Ntrp_P):
 		for j in range(Ntrp_q):
 	#	for j in range(Ntrap_L):
 		#print asep(P[i],M)/2.
 		#if (nu_SSA(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
-			if (nu_SSA(z, asep(P[i][j],M), fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, asep(P[i][j],M), fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
-				#return res.append(0.0)
-				return 0.0
-				print "mm-emission region too big mang"
+			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+				#res.append(0.0)
+				#Ivar[i][j]=0.0 #* P[i][j]
+				Ivar[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+
+				#print "mm-emission region too big mang"
 			else:
-				return np.minimum( fGW_int(P[i][j], qs, M), fGas_int(qs, MdEff, eps))/tEdd 
-				#res.append( np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps))/tEdd )
-				
-			# return np.array(res)
-		
+				#res.append(np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd )
+				#return np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+				Ivar[i][j] = 0.0
 
-
+				#TESTING
+				#return fGas_int(qs, eps)/tEdd 
+				#return fGW_int(P[i][j], qs, M)/tEdd 
+	#return np.array(res)
+	return Ivar
 
 
 
@@ -321,11 +350,11 @@ def tres_int(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 
 def tres_int_ALL(P, qs, M, MdEff, eps, tEdd):
 	##Cdont cut out those with too large an emission region (for denominator fo prob)
-	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps))/tEdd
+	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd
 
 
 # def tres_int2(qs, P, M, MdEff, eps, tEdd):
-# 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/tEdd
+# 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps) )/tEdd
 
 def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 	MEdd = LEdd_Fac/(MdEff*c*c)
@@ -379,16 +408,20 @@ def FDen_nmr(z, M, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
 	#thDA = (thMn * Dang(z, h, Om, OL))
 
 	PMax = PmaxNPC(KQ*pc2cm, M)
+	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
+	if (PMax<=PIsco):
+		return 0.0
+	else:
 
-	Ps  = np.linspace(0.0, PMax, Ntrp_P)
-	qss = np.linspace(qmin, 1.0, Ntrp_q)
+		Ps  = np.linspace(0.0, PMax, Ntrp_P)
+		qss = np.linspace(qmin, 1.0, Ntrp_q)
 
-	Ivar = np.meshgrid(Ps, qss) 
+		Ivar = np.meshgrid(Ps, qss) 
 
-	dP = PMax/Ntrp_P
-	dq = (1.0-qmin)/Ntrp_q
-	#return np.trapz(  np.trapz(  tres_int(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
-	return np.trapz(  np.trapz(  tres_int_ALL(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
+		dP = (PMax-PIsco)/Ntrp_P
+		dq = (1.0-qmin)/Ntrp_q
+		#return np.trapz(  np.trapz(  tres_int(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
+		return np.trapz(  np.trapz(  tres_int_ALL(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
 
 
 
@@ -418,6 +451,16 @@ def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, 
 	#	FF=0.0
 
 	return np.maximum(fbin * FF, 1.e-14)
+
+
+
+def Mbn2Lmm(Mbn):
+	f_Edd = 10.**draw_fEdd(-6.0, 0.7, -0.6, 0.4)
+	numm = c/(0.1)
+	Lbol = Mbn*(f_Edd * LEdd_Fac )
+	Lmm = Lbol/numm
+	return Lmm
+
 
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
@@ -453,6 +496,7 @@ def iCDF_fEdd(xmin, a, x0, sig, Uu):
 	return opti.fmin(fEdd_slv_func2, -4.0, args=(xmin, a, x0, sig, Uu), xtol=0.01, ftol = 0.01, disp=0)[0]
 
 def draw_fEdd(xmin, a, x0, sig):
+	#np.random.seed(2)
 	Uu = np.random.rand()
 	return iCDF_fEdd(xmin, a, x0, sig, Uu)
 
@@ -961,13 +1005,19 @@ def OptNEHT_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin, Pbase, xi, fbin, h
 	NEHT = intg.quad(Fbin_Integrand_GWgas, Lmn, Lmx,  args=(z, Mmx, chi, thMn, qmin, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) , epsabs=myabs, epsrel=myrel, limit=reclim, limlst = limlst, maxp1=maxp1, full_output=fo  )[0]
 	return NEHT
 
-
-#vecLmin = np.vectorize(Lmin)
 def OptNEHT_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
 	MdEff = 0.1
 	Lmn = np.minimum( Lmin(z, h, Om, OL, Fmin), Lmx)
 	Ls = np.linspace(Lmn,Lmx, Ntrap_L)
 	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([Fbin_Integrand_GWgas(L, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - Fbin_Integrand_GWgas(Lmn, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - Fbin_Integrand_GWgas(Lmx, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
+
+
+# #vecLmin = np.vectorize(Lmin)
+# def OptNEHT_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
+# 	MdEff = 0.1
+# 	Lmn = np.minimum( Lmin(z, h, Om, OL, Fmin), Lmx)
+# 	Ls = np.linspace(Lmn,Lmx, Ntrap_L)
+# 	return (Lmx - Lmn)/(2.*Ntrap_L) * (2.0 * np.sum([Fbin_Integrand_GWgas(L, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) for L in Ls]) - Fbin_Integrand_GWgas(Lmn, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) - Fbin_Integrand_GWgas(Lmx, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL) )
 
 	# if (type(z) is float or type(z) is np.float64):
 	# 	Lmn = Lmin(z, h, Om, OL, Fmin)
@@ -1033,10 +1083,15 @@ def OptNEHT_dz(zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin, Pbase, xi, fbin
 
 
 
+# def OptNEHT_Trap_dz(zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
+# 	#cant mak zminany smaller or canta invert CDF for fEdd_draw
+# 	zs = np.linspace(0.000001, zmax, Ntrap_z)
+# 	return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([OptNEHT_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - OptNEHT_Trap_dL(zs[0], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - OptNEHT_Trap_dL(zs[Ntrap_z-1], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
+
+
 def OptNEHT_Trap_dz(zmax, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL):
-	#cant mak zminany smaller or canta invert CDF for fEdd_draw
-	zs = np.linspace(0.001, zmax, Ntrap_z)
-	return 4.*ma.pi * (zmax - 0.001)/(2.*Ntrap_z) * (2.0 * np.sum([OptNEHT_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - OptNEHT_Trap_dL(zs[0], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - OptNEHT_Trap_dL(zs[Ntrap_z-1], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
+	zs = np.linspace(0.000001, zmax, Ntrap_z)
+	return 4.*ma.pi * (zmax - 0.000001)/(2.*Ntrap_z) * (2.0 * np.sum([OptNEHT_Trap_dL(z, Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) for z in zs]) - OptNEHT_Trap_dL(zs[0], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) - OptNEHT_Trap_dL(zs[Ntrap_z-1], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, xi, fbin, h, Om, OL) )
 
 
 	# Trap_sub = OptNEHT_Trap_dL(zs[0], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin, Pbase, xi, fbin, h, Om, OL) + OptNEHT_Trap_dL(zs[Ntrap_z-1], Mmx, eps, f_Edd, KQ, Fmin, chi, thMn, qmin, Pbase, xi, fbin, h, Om, OL)

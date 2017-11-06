@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -71,7 +71,7 @@ KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 0.1 
+f_Edd = 10.**(-3.5) 
 
 # if (Lmx==24.0):
 # 	f_Edd = 0.0001
@@ -107,7 +107,7 @@ Mmin= 0.**5*Msun
 
 
 
-zmax = 10.0
+zmax = 5.0
 
 ##FREE (and KEY) PARAMETERS
 chi  = 0.5 #From power law estimate of Elvis 1994  Radio Loud AGN (3e11/0.408e9)^(0.9-1.0)
@@ -138,7 +138,7 @@ pnoFit = [eps, KQ]
 
 thmin_max = 40.0
 Nz = 5
-Ng = int(1.*thmin_max)/2
+Ng = int(1.*thmin_max)/4
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)
@@ -151,7 +151,7 @@ NEHT_Z7 =np.zeros(Ng)
 
 thMns = np.linspace(1.0, thmin_max, Ng) 
 #Zs = [0.02, 0.05, 0.1, 0.5, 1.0]#, 2.0]
-Zs = [0.01, 0.1, 0.5, 1.0, 2.0]
+Zs = [0.05, 0.1, 0.2, 0.5, 1.0, 2.0]
 #Zs = [0.01, 0.05, 0.1, 1.0, 1.5, 2.0, 2.5]
 
 
@@ -241,7 +241,7 @@ else:
 
 			NEHT_Z5[i] = -IntzZ_Trap_OptNEHT(pnoFit, Zs[4], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 			
-			# NEHT_Z6[i] = -IntzZ_Trap_OptNEHT(pnoFit, Zs[5], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
+			NEHT_Z6[i] = -IntzZ_Trap_OptNEHT(pnoFit, Zs[5], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 
 			# NEHT_Z7[i] = -IntzZ_Trap_OptNEHT(pnoFit, Zs[6], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL)
 
@@ -269,7 +269,7 @@ else:
 
 			NEHT_Z5[i] = -IntzZ_OptNEHT(pnoFit, Zs[4], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin, Pbase, f_Edd, xi, fbin, h, Om, OL)
 			
-			# NEHT_Z6[i] = -IntzZ_OptNEHT(pnoFit, Zs[5], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin, Pbase, f_Edd, xi, fbin, h, Om, OL)
+			NEHT_Z6[i] = -IntzZ_OptNEHT(pnoFit, Zs[5], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin, Pbase, f_Edd, xi, fbin, h, Om, OL)
 			
 			# NEHT_Z7[i] = -IntzZ_OptNEHT(pnoFit, Zs[6], Mmx, Fmin, chi, thMns[i]* mu_as2rad, qmin, Pbase, f_Edd, xi, fbin, h, Om, OL)
 
@@ -280,7 +280,7 @@ else:
 		Ntot_Z3 = Ntot_RLF(Zs[2], Fmin, chi, h, Om, OL)
 		Ntot_Z4 = Ntot_RLF(Zs[3], Fmin, chi, h, Om, OL)
 		Ntot_Z5 = Ntot_RLF(Zs[4], Fmin, chi, h, Om, OL)
-		# Ntot_Z6 = Ntot_RLF(Zs[5], Fmin, chi, h, Om, OL)
+		Ntot_Z6 = Ntot_RLF(Zs[5], Fmin, chi, h, Om, OL)
 		# Ntot_Z7 = Ntot_RLF(Zs[6], Fmin, chi, h, Om, OL)
 
 
@@ -379,19 +379,19 @@ Lmx_cgs = Lmx + 7.0
 
 
 if (fEdd_Dist):
-	plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.57,0.89, r"$q^{\rm{Vmin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 	plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
 	plt.figtext(0.57,0.64, r"$f_{\rm{bin}}=%g$" %fbin, color='gray', fontsize=14)
 else:
-	plt.figtext(0.57,0.89, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.57,0.89, r"$q^{\rm{Vmin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.57,0.84, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 	plt.figtext(0.57,0.79, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.57,0.74, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.57,0.69, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-	plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+	plt.figtext(0.57,0.64, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='gray', fontsize=14)
 	plt.figtext(0.57,0.59, r"$f_{\rm{bin}}=%g$" %fbin, color='gray', fontsize=14)
 
 	#plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
@@ -405,10 +405,10 @@ plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],
 
 plt.xlabel(r"$\theta_{\rm{min}}$ [$\mu$as]")
 if (logN):
-	plt.ylabel(r"$\log_{10}[N_{\rm{EHT}}]$")
-	#plt.ylabel(r"$\log_{10}[\rm{max}\left\{N_{\rm{EHT}},0.1\right\}]$")
+	plt.ylabel(r"$\log_{10}[N_{\rm{VLBI}}]$")
+	#plt.ylabel(r"$\log_{10}[\rm{max}\left\{N_{\rm{VLBI}},0.1\right\}]$")
 else:
-	plt.ylabel(r"$N_{\rm{EHT}}$")
+	plt.ylabel(r"$N_{\rm{VLBI}}$")
 
 
 plt.xlim(thMns[0], thMns[Ng-1])
@@ -484,7 +484,7 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 
 if (fEdd_Dist):
-	plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.73,0.86, r"$q^{\rm{Vmin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 	plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
@@ -492,12 +492,12 @@ if (fEdd_Dist):
 	plt.figtext(0.57,0.61, r"$f_{\rm{bin}}=%g$" %fbin, color='gray', fontsize=14)
 
 else:
-	plt.figtext(0.73,0.86, r"$q^{\rm{Emin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
+	plt.figtext(0.73,0.86, r"$q^{\rm{Vmin}}_s=%g$" %qmin_EHT, color='black', fontsize=14)
 	plt.figtext(0.73,0.81, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='black', fontsize=14)
 	plt.figtext(0.73,0.76, r"$\dot{\mathcal{M}}=%g$" %eps, color='gray', fontsize=14)
 	plt.figtext(0.73,0.71, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='gray', fontsize=14)
 	plt.figtext(0.73,0.66, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='gray', fontsize=14)
-	plt.figtext(0.73,0.61, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='gray', fontsize=14)
+	plt.figtext(0.73,0.61, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='gray', fontsize=14)
 	plt.figtext(0.57,0.56, r"$f_{\rm{bin}}=%g$" %fbin, color='gray', fontsize=14)
 
 
@@ -506,9 +506,9 @@ else:
 
 plt.xlabel(r"$\theta_{\rm{min}}$ [$\mu$as]")
 if (logN):
-	plt.ylabel(r"$\log_{10}[f_{\rm{EHT}}]$")
+	plt.ylabel(r"$\log_{10}[f_{\rm{VLBI}}]$")
 else:
-	plt.ylabel(r"$N_{\rm{EHT}}$")
+	plt.ylabel(r"$N_{\rm{VLBI}}$")
 
 
 plt.xlim(thMns[0], thMns[Ng-1])
