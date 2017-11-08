@@ -21,7 +21,7 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 
 if (fEdd_Dist):
@@ -41,10 +41,10 @@ CntPlt_CumZ = True
 CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = False
-fEdd_Npc = True
-Mdot_Npc = False
-qmin_Npc = False
+Mmx_Pbase = True
+fEdd_Npc = False
+Mdot_Npc = True
+qmin_Npc = True
 
 qmin_Mdot = False
 qmin_fEdd = False

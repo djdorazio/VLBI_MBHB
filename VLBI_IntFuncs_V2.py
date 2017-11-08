@@ -16,8 +16,8 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #JET CONSTANTS
 nummGHz = c/0.1/1.e9 ##1mm in GHz
-thobs = 0.1 ##Eval at thobs such that nu_SSA is max, most conservative?
-gamj = 10. ##typical, maybe high
+gamj = 10.0 ##typical, maybe high
+thobs = 1./gamj#ma.pi/4. ##Eval at thobs such that nu_SSA is max, most conservative?
 ke = 1.0 #constant order unity
 Delc = np.log(1.e5) ##COul log of rmax/rmin
 Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
@@ -129,9 +129,6 @@ def FbinPM(P, M, qs, MdEff, eps, xi):
 	return min(tres,1.0)
 
 
-def PbaseObs(Pbase,z):
-	return Pbase/(1.+z)
-
 
 def PmaxNPC(Npc, M):
 	return 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)
@@ -141,6 +138,9 @@ def PminRes(M, thmn, z, h, Om, OL):
 	DA=Dang(z, h, Om, OL)
 	thDA = (thmn * Dang(z, h, Om, OL))
 	return 2.*ma.pi*(thDA)**(3./2.)/np.sqrt(G*M)
+
+def PISCO(M):
+	return 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
 
 ##################
 ### Doppler FUNCS
@@ -268,166 +268,6 @@ def RSG(eps, M, MdEff):
 
 
 
-def FNum(z, M, thMn, qmin, eps, Pbase, MdEff, xi, KQ, h, Om, OL):
-	MEdd = LEdd_Fac/(MdEff*c*c)
-	tEdd = 1./MEdd
-
-	eps = eps/tEdd
-	thmn = thMn
-	DA=Dang(z, h, Om, OL)
-
-	thDA = (thMn * Dang(z, h, Om, OL))
-
-	Npc = KQ*pc2cm
-	if ( Npc <= asep(Pbase/(1.+z), M) ):
-		Pbase = 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z)
-	
-
-	qminGWm_ONLY = (np.sqrt(5.)*np.sqrt((c**5.*eps)/(G**3*M**3))*thDA**2)/4.
-	qminGWm = (np.sqrt(5.)*np.sqrt((c**5.*eps)/(G**3*M**3))*thDA**2)/4.
-	qmaxGASm = (np.sqrt(5)*np.sqrt(c**5.*eps)*(Pbase/(ma.pi + ma.pi*z))**1.3333333333333333)/(8.*2**0.3333333333333333*(G*M)**0.8333333333333334)
-
-	if (type(z) is float or type(z) is np.float64):
-		qminGWm = np.minimum(np.maximum(qminGWm, qmin),1.0)
-		qminGWm_ONLY = np.minimum(qminGWm_ONLY, 1.0)
-		qmaxGASm = np.maximum(np.minimum(qmaxGASm, 1.0),qmin)
-	else:
-		unty = np.ones(len(z))
-		qmns = unty*qmin
-		qminGWm = np.minimum(np.maximum(qminGWm, qmns),unty)
-		qmaxGASm = np.maximum(np.minimum(qmaxGASm, unty), qmin)
-		qminGWm_ONLY = np.minimum(qminGWm_ONLY, unty)
-
-	#fGW = (3.*ma.pi*((128.*np.sqrt(2.)*5.**0.625*G**4.625*M**4.625*(qmaxGASm**2.75 - qminGWm**2.75))/(c**1.875*eps**1.375) - 275*c**5*np.sqrt(G*M)*thDA**5.5*np.log(qmaxGASm) + 275.*c**5.*np.sqrt(G*M)*thDA**5.5*np.log(qminGWm)))/(77440.*G**4*M**4)
-
-#	fgas = (55.*Pbase*(qmaxGASm**2 - qmin**2) - (32.*np.sqrt(2.)*5.**0.625*G**0.625*M**0.625*ma.pi*(qmaxGASm**2.75 - qmin**2.75)*(1. + z))/(c**1.875*eps**0.375))/(440.*eps*xi*(1. + z))
-	#fgas = (55.*Pbase*(qmaxGASm**2 - qminGWm**2) - (32.*np.sqrt(2.)*5.**0.625*G**0.625*M**0.625*ma.pi*(qmaxGASm**2.75 - qminGWm**2.75)*(1. + z))/(c**1.875*eps**0.375))/(440.*eps*xi*(1. + z))
-
-	PMin = PminRes(M, thmn, z, h, Om, OL)
-	if (PMin >= Pbase/(1.+z)):
-		fGW1 = 0.0
-		fgas1 = 0.0
-	else:
-		fGW1 = (15.*c**5*(-Pbase**3.6666666666666665 + (PMin*(1 + z))**3.6666666666666665)*np.log(qmin))/(11264.*2**0.6666666666666666*(G*M)**1.6666666666666667*ma.pi**2.6666666666666665*(1. + z)**3.6666666666666665)
-		fgas1 = (qmin**2 - qmaxGASm**2) * (-Pbase + PMin * (1.+z) )/(8.* eps *  xi * (1. + z))
-
-
-	fGW2 = (3.*np.sqrt(2.)*(G*M)**0.625*ma.pi*(-qmaxGASm**2.75 + qminGWm**2.75))/(121.*5**0.375*c**1.875*eps**1.375) + (15.*c**5*Pbase**3*(Pbase/(2. + 2.*z))**0.6666666666666666*np.log(qmaxGASm/qminGWm))/(11264.*(G*M)**1.6666666666666667*ma.pi**2.6666666666666665*(1. + z)**3)
-	fgas2 = (PMin*(-qmaxGASm**2 + qminGWm**2))/(8.*eps*xi) + (4.*np.sqrt(2.)*(G*M)**0.625*ma.pi*(qmaxGASm**2.75 - qminGWm**2.75))/(11.*5**0.375*c**1.875*eps**1.375*xi)
-
-
-	## Ensure that integration over M is done properly
-	if (qmin >= qmaxGASm ):
-		fgas1 = 0.0
-
-	if (qminGWm >= qmaxGASm ):
-		#fGW = 0.0
-		fGW2 = 0.0
-		#fgas = 0.0
-		fgas2 = 0.0
-
-	if (fGW2 < 0.0):
-		print "fGW2_N==0"
-		fGW2 = 0.0
-
-	# if (fgas1 < 0.0):
-	# 	#print "fgas_N==0"
-	# 	fgas1 = 0.0
-
-	# if (fgas2 < 0.0):
-	# 	#print "fgas_N==0"
-	# 	fgas2 = 0.0
-
-	fgas = fgas1 - fgas2
-	fGW = fGW1 - fGW2
-
-	# if (fgas < 0.0):
-	# 	#print "fgas_N==0"
-	# 	fgas = 0.0
-
-	# if (qminGWm >= qmaxGASm):
-	# 	fgas = 0.0
-
-	# if (fGW < 0.0):
-	# 	#print "fGW_N==0"
-	# 	fGW = 0.0
-
-
-
-
-	return fGW/xi + fgas#/tEdd/xi + fgas/tEdd
-
-
-
-	# #Cut out all values of M that aren't allowed numerically - should/can do this anlaytically
-	# if (fGW<0.0 or fgas<0.0):
-	# 	#print "out of Mass range Num" # - THIS DOES HAPPEN 
-	# 	Fnum = 1.0
-	# else:
-	# 	Fnum = fGW/tEdd/xi + fgas/tEdd
-
-
-	#return Fnum
-
-
-
-
-
-def FDen(z, M, thMn, qmin, eps, KQ, MdEff,xi, h, Om, OL):
-	Npc = KQ*pc2cm
-
-
-	#valpha = 0.3
-	#acst  = 30.99 * 10**3 * (valpha/0.3)**(38./45.)
-
-	MEdd = LEdd_Fac/(MdEff*c*c) ##with M=1
-	tEdd = 1./MEdd  ##with M=1
-
-	eps = eps/tEdd
-
-	thDA = (thMn * Dang(z, h, Om, OL))
-
-	qMAXDEN = (np.sqrt(5.)*np.sqrt((c**5*eps)/(G**3*M**3))*Npc**2)/4.
-
-	if (type(z) is float or type(z) is np.float64):
-		qMAXDEN = np.maximum(np.minimum(qMAXDEN, 1.), qmin)
-	else:
-		unty = np.ones(len(z))
-		#qmns = unty*qmin
-		qMAXDEN = np.maximum(np.minimum(qMAXDEN, unty), qmin)
-
-	fGW = (3.*np.sqrt(2.)*G**0.625*M**0.625*ma.pi*(qMAXDEN**2.75 - qmin**2.75))/(121.*5**0.375*c**1.875*eps**1.375)
-	fgas = (ma.pi*(5.*Npc**1.5*(qMAXDEN**2 - qmin**2) - (16.*np.sqrt(2.)*5**0.625*G**1.125*M**1.125*(qMAXDEN**2.75 - qmin**2.75))/(11.*c**1.875*eps**0.375)))/(20.*eps*np.sqrt(G*M)*xi)
-
-
-
-
-	if (qmin >= qMAXDEN):
-		fGW = 0.0
-		fgas = 0.0
-
-
-	# if (fGW < 0.0):
-	# 	#print "fGW_N==0"
-	# 	fGW = 0.0
-
-	# if (fgas < 0.0):
-	# 	#print "fgas_N==0"
-	# 	fgas = 0.0
-
-	return fGW/xi  + fgas#fGW/tEdd/xi + fgas/tEdd
-
-
-	# ##Cut out all values of M that aren't allowed numerically - should/can do this anlaytically
-	# if (fGW<0.0 or fgas<0.0):
-	# 	#print "out of Mass range Den" #- this never happens (or else you'd knwo /0)
-	# 	Fden = 0.0
-	# else:
-	# 	Fden = fGW/tEdd/xi + fgas/tEdd
-
-	# return Fden
-
-
 
 
 
@@ -437,84 +277,47 @@ def fGW_int(P, qs, M):
 
 
 def fGas_int(qs, eps):
-	#MEdd = LEdd_Fac/(MdEff*c*c)
-	#tEdd = 1./MEdd
-
-	#eps = eps/tEdd
 	return qs/(4.*eps)  ## eps passed here is eps/tEdd
-
-# def tres_int(P, qs, M, MdEff, eps, tEdd):
-# 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps))/tEdd
-# 	#return qs/(4.*eps)#/tEdd
-# 	#return fGW_int(P, qs, M)/tEdd
-
 
 
 def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
 	##DO WE WANT REST FRAME ASEP??
-	##CANT DO IF STATEMENT need MINS?
-	#xs  = np.linspace(0.0, 1.0, Ntrp_P) ##integrate in rest frame
-	#ys = np.linspace(0.0, 1.0, Ntrp_q)
-
 	Tres = P*0.0#jsut give it the right shape
 	
 	for i in range(Ntrp_q):
 		for j in range(Ntrp_P):
-	#	for j in range(Ntrap_L):
-		#print asep(P[i],M)/2.
-		#if (nu_SSA(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)>nummGHz or nu_loss(z, pc2cm*0.001, fEdd, M, thobs, gamj, ke, Delc, Lam)<nummGHz):
+			#Dont mult a by sin(th_obs) because we want r_observed<a, not r(jet frame) < a
 			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
-				#res.append(0.0)
-				#Ivar[i][j]=0.0 #* P[i][j]
+			#if (nu_SSA(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
 				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
-
-				#print "mm-emission region too big mang"
-			#else:
-				#res.append(np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd )
-				#return np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
-			#	Tres[i][j] = 0.0
-
-				#TESTING
-				#return fGas_int(qs, eps)/tEdd 
-				#return fGW_int(P[i][j], qs, M)/tEdd 
-	#return np.array(res)
 	return Tres
 	
 	#return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
 
 def tres_int_ALL(P, qs, M, MdEff, eps, tEdd):
-	##Cdont cut out those with too large an emission region (for denominator fo prob)
+	##dont cut out those with too large an emission region (for denominator of prob)
 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd
 
-
-# def tres_int2(qs, P, M, MdEff, eps, tEdd):
-# 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, MdEff, eps) )/tEdd
-
+    
 def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 	MEdd = LEdd_Fac/(MdEff*c*c)
 	tEdd = 1./MEdd
 
 	eps = eps/tEdd
 	thmn = thMn
-	#DA=Dang(z, h, Om, OL)
 
-	#thDA = (thMn * Dang(z, h, Om, OL))
 
 	Npc = KQ*pc2cm
-	#if ( Npc <= asep(Pbase/(1.+z), M) ):
-	#	Pbase = 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z)
-	Pbase = np.minimum(Pbase, 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z))
+	PMax = PmaxNPC(KQ*pc2cm, M)
+	Pbase = np.minimum(Pbase, PMax*(1.+z))
+	#PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M) 
+	PMin = np.maximum( PminRes(M, thmn, z, h, Om, OL), PISCO(M) ) ##rest frame
 
-	#PIsco = 2.*np.pi * (6.)**(1.5) *G*M/c/c/c
-	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M) 
-	PMin = np.maximum(PminRes(M, thmn, z, h, Om, OL), PIsco) ##rest frame
-	#Pbase = np.maximum(Pbase, PMin*(1.+z))	  ##obs frame
 
 	if (Pbase<=PMin*(1.+z) or qmin>=1.0):
 		return 0.0
 	else:
-
 		
 		Ps  = np.linspace(PMin, Pbase/(1.+z), Ntrp_P) ##integrate in rest frame
 		qss = np.linspace(qmin, 1.0, Ntrp_q)
@@ -523,10 +326,9 @@ def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 
 		dP = ( Pbase/(1.+z) - PMin)/Ntrp_P
 		dq = (1.0-qmin)/Ntrp_P
-		#return np.trapz(  np.trapz(  tres_int(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
+		
 	 	#return intg.dblquad(tres_int, qmin, 1.0, lambda qs: PMin, lambda nu: Pbase/(1.+z),  args =(M, MdEff, eps, tEdd), epsabs=myabs, epsrel=myrel )[0]
 		return np.trapz(  np.trapz(  tres_intnu(Ivar[0], Ivar[1], M, MdEff, eps, fEdd, tEdd, z), dx=dP, axis=0), dx=dq, axis=0)
-
 
 
 
@@ -537,13 +339,10 @@ def FDen_nmr(z, M, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
 	tEdd = 1./MEdd
 
 	eps = eps/tEdd
-	#thmn = thMn
-	#DA=Dang(z, h, Om, OL)
 
-	#thDA = (thMn * Dang(z, h, Om, OL))
 
 	PMax = PmaxNPC(KQ*pc2cm, M)
-	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
+	PIsco = PISCO(M)#2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M)
 	if (PMax<=PIsco):
 		return 0.0
 	else:
@@ -555,14 +354,13 @@ def FDen_nmr(z, M, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
 
 		dP = (PMax-PIsco)/Ntrp_P
 		dq = (1.0-qmin)/Ntrp_q
-		#return np.trapz(  np.trapz(  tres_int(Ivar[0], Ivar[1], M, MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
+		
+		
 		return np.trapz(  np.trapz(  tres_int_ALL(Ivar[0], Ivar[1], M,  MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
 
 
 
- 	#return intg.dblquad(tres_int, qmin, 1.0, lambda qs: 0.0, lambda nu: PMax,  args =(M, MdEff, eps), epsabs=myabs, epsrel=myrel )[0]
-
-
+ 		#return intg.dblquad(tres_int_ALL, qmin, 1.0, lambda qs: 0.0, lambda nu: PMax,  args =(M,  MdEff, eps, tEdd), epsabs=myabs, epsrel=myrel )[0]
 
 
 def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
@@ -572,7 +370,7 @@ def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, 
 	Numr = FNum_nmr(z, M, thMn, qmin_EHT, eps_CBD, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL)
 	Dnmr = FDen_nmr(z, M, thMn, qmin_POP, eps_CBD, KQ, MdEff, xi, h, Om, OL)
 
-	## Should only happen if picked an inconsistent mass no? (numerical enforcement of integration bounds)
+	# Should only happen if picked an inconsistent mass no? (numerical enforcement of integration bounds)
 	if (Dnmr == 0.0):
 		FF = 0.0
 	else:
@@ -585,13 +383,21 @@ def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, 
 	#if (FF<0):
 	#	FF=0.0
 
+	#FF = Numr/(Dnmr+1.e-14)
 	return np.maximum(fbin * FF, 1.e-14)
 
 def Mbn2Lmm(Mbn, f_Edd):
+	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	nu14 = 1.4e9
 	numm = c/(0.1)
-	Lbol = Mbn*(f_Edd * LEdd_Fac )
-	Lmm = Lbol/numm
+	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
+	L14 = 10.**( ( np.log10( Lbol/BCUV ) + 19.0 )/(1.5) )/nu14
+	Lmm = ( ( (3.e11/(1.4e9))**(-0.1) ) * L14 )/1.e7
 	return Lmm
+
+
+
+
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	BCUV = 4.2 
@@ -602,7 +408,6 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	#return Mbn
 	return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
-
 
 
 def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
@@ -914,6 +719,9 @@ def Fbin_NOLF_Integrand_GWgas(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f
 
 def Fbin_Integrand_GWgas(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
 	return dVdzdOm(z, h, Om, OL) * smLF(Lmm, z, chi)/(10.**6 * pc2cm)**3 * FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)	
+
+
+
 
 #vecdVdzdOm = np.vectorize(dVdzdOm)
 #vecFbinofLmm = np.vectorize(FbinofLmm)

@@ -20,7 +20,17 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
+
+
+ztst=0.1
+
+if (fEdd_Dist):
+	Ng = 20
+else:
+	Ng = 100
+sumz = 200
+NgHi = 100
 
 
 if (fEdd_Dist):
@@ -73,14 +83,14 @@ eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two toge
 # 	f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
 
 fbin = 1.0
-f_Edd = 10**(-3.5)  
+f_Edd = 10**(-3.0)  
 MdEff = 0.1
 
 ## binary pop params
 qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
-zeval = 0.5  #eval at this z
+#zeval = 0.5  #eval at this z
 zmax = 5.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
@@ -107,60 +117,61 @@ xi=1.0
 
 #JET CONSTANTS
 nummGHz = c/0.1/1.e9 ##1mm in GHz
-thobs = 0.1 ##Eval at thobs such that nu_SSA is max, most conservative?
-gamj = 10. ##typical, maybe high
+gamj = 10.0 ##typical, maybe high
+thobs = 1./gamj#ma.pi/4. ##Eval at thobs such that nu_SSA is max, most conservative?
 ke = 1.0 #constant order unity
 Delc = np.log(1.e5) ##COul log of rmax/rmin
 Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 
-
 #### Shade region that is bright enough
 def Flxnu(z, Mbn, f_Edd, h, Om, OL, Fmin, fEdd_Dist):
 	if (fEdd_Dist):
-		Fmm = Mbn2Lmm(Mbn)/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+		Fmm = Mbn2Lmm(Mbn)*1.e7/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 	else:
-		Fmm = Mbn2Lmm(Mbn, f_Edd)/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+		Fmm = Mbn2Lmm(Mbn, f_Edd)*1.e7/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 	if (Fmm>=Fmin):
 		return 0.0
 	else:
 		return 1.0
 
 
-def asep_bnd(P, M, z, thmn, h, Om, OL, Pbase):
+def asep_bnd(P, M, z, thmn, h, Om, OL, Pbase, kq):
 
-	Npc = KQ*pc2cm
-	Pbase = np.minimum(Pbase, 2.*ma.pi*(Npc)**(3./2.)/np.sqrt(G*M)*(1.+z))
-	PIsco = 2.*np.pi * (6.*G*M/c/c)**(1.5) / np.sqrt(G*M) 
-	PMin = np.maximum(PminRes(M, thmn, z, h, Om, OL), PIsco) ##rest frame
+	# ##P passed is obs frame
+	Npc = kq*pc2cm
+	PMax = PmaxNPC(KQ*pc2cm, M)
+	Pbase = np.minimum(Pbase, PMax*(1.+z))
+	PMin = np.maximum( PminRes(M, thmn, z, h, Om, OL), PISCO(M) ) 
 
-	if (asep(P, M) >= thmn*Dang(z, h, Om, OL) and Pbase>PMin*(1.+z) and P*(1.+z)<=Pbase):
+	#if (asep(P, M) >= thmn*Dang(z, h, Om, OL) and Pbase>PMin*(1.+z) and P*(1.+z)<=Pbase):
+	if (P>=PMin*(1.+z) and Pbase>PMin*(1.+z) and P<=Pbase):
+	#if (P>=PMin*(1.+z) and P<=Pbase):
 		return 0.0
 	else:
 		return 1.0
 
 def nubnd(P, M, z, fEdd, thobs, gamj, ke, Delc, Lam):
+	P = P/(1.+z)
 	if (nu_SSA(z, asep(P,M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P,M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
 		return 0.0
 	else:
 		return 1.0
 
 
-ztst=1.0
 
-if (fEdd_Dist):
-	Ng = 20
-else:
-	Ng = 40
-sumz = 200
 Pbasez = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), Ng)
 Mbnz = np.linspace(5.0, 11.5, Ng)
 
 
 Int_grid = np.zeros([Ng,Ng])
 Flxmns = np.zeros([Ng,Ng])
-abnds = np.zeros([Ng,Ng])
-nubnds = np.zeros([Ng,Ng])
+abnds = np.zeros([NgHi,NgHi])
+nubnds = np.zeros([NgHi,NgHi])
+
+PbasezHi = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), NgHi)
+MbnzHi = np.linspace(5.0, 11.5, NgHi)
+
 
 #Int_grid_avg = np.zeros([Ng,Ng])
 
@@ -172,23 +183,28 @@ if (fEdd_Dist):
 	for k in range(sumz):
 		for i in range(0,Ng):
 			for j in range(0,Ng):
-				Int_grid[j][i] =  Int_grid[j][i] + Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun))-7., ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+				Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, f_Edd)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas_Mbn(10**Mbnz[i]*Msun, ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
 	Int_grid = Int_grid/sumz
 	Flxmns = Flxmns/sumz
+	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun))
 else:		
 	for i in range(0,Ng):
 		for j in range(0,Ng):
-			Int_grid[j][i] = Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun, f_Edd))-7., ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+			Int_grid[j][i] = Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun, f_Edd)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 			Flxmns[j][i]   = Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
 
-Int_grid = 4.*np.pi*ztst*np.log10(1.e44/(c/0.1)) * Int_grid
+	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun, f_Edd))
 
 
-for i in range(0,Ng):
-		for j in range(0,Ng):
-			abnds[j][i]    = asep_bnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, thMn, h, Om, OL, Pbase)
-			nubnds[j][i]   = nubnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
+for i in range(0, NgHi):
+		for j in range(0,NgHi):
+			abnds[j][i]    = asep_bnd(10**PbasezHi[j]*yr2sec, 10**MbnzHi[i]*Msun, ztst, thMn, h, Om, OL, Pbase, KQ)
+			nubnds[j][i]   = nubnd(10**PbasezHi[j]*yr2sec, 10**MbnzHi[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
+
+# abnds   = asep_bnd(10**Pbasez*yr2sec, 10**Mbnz*Msun, ztst, thMn, h, Om, OL, Pbase)
+# nubnds  = nubnd(10**Pbasez*yr2sec, 10**Mbnz*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
 
 
 ### Shade resolvable separations
@@ -207,29 +223,32 @@ plt.figure(figsize=[7.5,6.6])
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g$" %(ztst))
 # else:
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g, $f_{\rm{Edd}} = 10^{%g}}$" %(ztst,np.log10(f_Edd)), fontsize=14)
-plt.title(r"$\frac{d^2N}{dL dz}\Delta L\Delta z \mathcal{F}$", fontsize=15)
+plt.title(r"$\frac{d^2N}{dL dz} L z \mathcal{F}$", fontsize=15)
 
 ### integrand contours
 cnt = plt.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
 
 ##Fmin bounds
-plt.contourf(Mbnz, Pbasez, np.log10(Flxmns), colors="black", alpha=0.3, zorder=10)
+plt.contourf(Mbnz, Pbasez, np.log10(Flxmns-0.5), colors="black", alpha=0.3, zorder=10)
 plt.contour(Mbnz, Pbasez, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
 
 ##asep bounds
-plt.contourf(Mbnz, Pbasez, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
-plt.contour(Mbnz, Pbasez, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
+plt.contourf(MbnzHi, PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
+plt.contour(MbnzHi, PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
 
 
 ##nu bounds
-plt.contourf(Mbnz, Pbasez, np.log10(nubnds), colors="yellow", alpha=0.3, zorder=10)
-plt.contour(Mbnz, Pbasez, nubnds, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
+plt.contourf(MbnzHi, PbasezHi, np.log10(nubnds), colors="yellow", alpha=0.3, zorder=10)
+plt.contour(MbnzHi, PbasezHi, nubnds, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
 
 
 #cbar = plt.colorbar(cnt)
 lms = plt.contour(Mbnz, Pbasez, np.log10(Int_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
 plt.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=14)	
 
+#Diags
+#plt.plot(Mbnz, np.log10(PminRes(10.**Mbnz*Msun, thMn, ztst, h, Om, OL)/yr2sec ) )
+#plt.plot(Mbnz, np.log10(PISCO(10.**Mbnz*Msun)/yr2sec ) )
 
 
 FminSv = Fmin/mJy2cgs/1000.

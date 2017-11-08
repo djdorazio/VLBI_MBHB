@@ -17,13 +17,19 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 101 #25
-Ntrap_L = 101 #25
+Ntrap_z = 161 #25
+Ntrap_L = 161 #25
 
-Ntrp_P = 41.
-Ntrp_q = 41.
+Ntrp_P = 61.
+Ntrp_q = 31.
 
-Lmx = 31.0
+
+xminDraw = -6.0 
+aDraw = -0.3 
+x0Draw = -0.6
+sigDraw = 0.3
+
+Lmx = 32.0
 
 
 ##################
@@ -346,9 +352,11 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 def step(x):
     return 1 * (x > 0)
 
-def pdf_fEdd(x, xmin, a, x0, sig):
+def pdf_fEdd(x, xmin, ap, x0, sig):
 	#(x is logf)
- 	return (2.*(1. + a)*(np.exp(-(-x + x0)**2/(2.*sig**2)) + (-x)**a)*(1. - step(x))* step(x - xmin))/((2.*(-xmin)**a*xmin + (1. + a)*np.sqrt(2*np.pi)*sig*(spc.erf((0.7071067811865475*x0)/sig) - spc.erf((0.7071067811865475*(x0 - xmin))/sig)))*step(-xmin)*(-1. + step(xmin)))
+ 	#return (2.*(1. + a)*(np.exp(-(-x + x0)**2/(2.*sig**2)) + (-x)**a)*(1. - step(x))* step(x - xmin))/((2.*(-xmin)**a*xmin + (1. + a)*np.sqrt(2*np.pi)*sig*(spc.erf((0.7071067811865475*x0)/sig) - spc.erf((0.7071067811865475*(x0 - xmin))/sig)))*step(-xmin)*(-1. + step(xmin)))
+ 	return ((10.**x)**ap + 1./(np.exp( (x - x0)**2/(2.*sig**2) )*np.sqrt(2.*np.pi)*sig))/((0.43429448190325176*(1. - 10.**(ap*xmin)))/ap + 0.5*(-spc.erf(x0/(np.sqrt(2.)*sig)) + spc.erf((x0 - xmin)/(np.sqrt(2.)*sig))))
+
 
 def CDF_fEdd(xcum, xmin, a, x0, sig):
 	Nftrap = 41
@@ -366,10 +374,9 @@ def iCDF_fEdd(xmin, a, x0, sig, Uu):
 	return opti.fmin(fEdd_slv_func2, -4.0, args=(xmin, a, x0, sig, Uu), xtol=0.01, ftol = 0.01, disp=0)[0]
 
 def draw_fEdd(xmin, a, x0, sig):
+	#np.random.seed(2)
 	Uu = np.random.rand()
 	return iCDF_fEdd(xmin, a, x0, sig, Uu)
-
-
 
 
 
@@ -386,7 +393,7 @@ def GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, 
 	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
 
 
-	f_Edd = 10.**draw_fEdd(-6.0, 0.3, -0.6, 0.3)
+	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
 
 
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
@@ -412,7 +419,7 @@ def GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbas
 	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
 
 
-	f_Edd = 10.**draw_fEdd(-6.0, 0.3, -0.6, 0.3)
+	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
 	#f_Edd = 10.**draw_fEdd(-6.0, 0.7, -0.6, 0.4)
 	#print f_Edd
 
