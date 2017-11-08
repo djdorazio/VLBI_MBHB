@@ -305,7 +305,7 @@ if (fEdd_Dist==True):
 
 
 	plt.figure(figsize=[8,6])
-	plt.title("LLAGN")
+	#plt.title("LLAGN")
 
 
 	plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
@@ -337,14 +337,17 @@ if (fEdd_Dist==True):
 
 
 
-	plt.xlabel(r'$\log{f_{\rm{GW}}}$')
-	plt.ylabel(r'$\log{h_c}$')
+	plt.xlabel(r'$\log_{10}{f_{\rm{GW}}}$')
+	plt.ylabel(r'$\log_{10}{h_c}$')
+
+	plt,xlim(-10.,-5.)
+
 	plt.tight_layout()
 
 
 	plt.figtext(0.8,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
 	plt.figtext(0.8,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
-	plt.figtext(0.8,0.75, r"$q^{\rm{Pmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
+	plt.figtext(0.8,0.75, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
 
 
 		

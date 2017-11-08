@@ -30,13 +30,13 @@ sigDraw = 0.3
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 81 #25
+Ntrap_L = 81 #25
 
-Ntrp_P = 31
+Ntrp_P = 41
 Ntrp_q = 31
 
-Lmx = 32.0#10.*30
+Lmx = 31.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
@@ -455,6 +455,22 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	#return Mbn
 	return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
+
+
+
+def Lmm2Mbn_draw(Lmm):
+	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
+	BCUV = 4.2 
+	nu14 = 1.4e9
+	numm = c/(0.1)
+	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
+	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
+	return Mbn
+	#return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
+
+
+
 
 def step(x):
     return 1 * (x > 0)

@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -71,7 +71,7 @@ KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 10.**(-3.5) 
+f_Edd = 10.**(-3.0) 
 
 # if (Lmx==24.0):
 # 	f_Edd = 0.0001
@@ -397,7 +397,7 @@ else:
 	#plt.figtext(0.7,0.55, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='black', fontsize=15)
 
 
-plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4]), (0.76,0.68), fontsize=14)
+plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0], p6[0]], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4], "z=%g"%Zs[5]), (0.76,0.68), fontsize=14)
 
 #plt.figlegend([ p1[0], p2[0], p3[0], p4[0], p5[0], p6[0], p7[0] ], ("z=%g"%Zs[0], "z=%g"%Zs[1],"z=%g"%Zs[2],"z=%g"%Zs[3],"z=%g"%Zs[4],"z=%g"%Zs[5],"z=%g"%Zs[6]), (0.76,0.58), fontsize=14)
 

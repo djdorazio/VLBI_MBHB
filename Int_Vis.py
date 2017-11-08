@@ -22,15 +22,14 @@ from GWB_IntFuncs import *
 ## method optioncs
 fEdd_Dist = True
 
-
-ztst=0.1
+ztst=0.5
 
 if (fEdd_Dist):
 	Ng = 20
 else:
 	Ng = 100
-sumz = 200
-NgHi = 100
+sumz = 100
+NgHi = 200
 
 
 if (fEdd_Dist):
@@ -136,6 +135,17 @@ def Flxnu(z, Mbn, f_Edd, h, Om, OL, Fmin, fEdd_Dist):
 		return 1.0
 
 
+def FlxnuL(z, Lmm, f_Edd, h, Om, OL, Fmin, fEdd_Dist):
+	if (fEdd_Dist):
+		Fmm = 10.**Lmm*1.e7/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+	else:
+		Fmm = 10.**Lmm*1.e7/4./np.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+	if (Fmm>=Fmin):
+		return 0.0
+	else:
+		return 1.0
+
+
 def asep_bnd(P, M, z, thmn, h, Om, OL, Pbase, kq):
 
 	# ##P passed is obs frame
@@ -159,13 +169,31 @@ def nubnd(P, M, z, fEdd, thobs, gamj, ke, Delc, Lam):
 		return 1.0
 
 
+def FlxfrmL(Lmm, z, h, Om, OL):
+	return Lmm*1.e7/4./ma.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+
+
+def FlxfrmM(Mbn, f_Edd, z, h, Om, OL):
+	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	nu14 = 1.4e9
+	numm = c/(0.1)
+	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
+	L14 = 10.**( ( np.log10( Lbol/BCUV ) + 19.0 )/(1.5) )/nu14
+	Lmm = ( ( (3.e11/(1.4e9))**(-0.1) ) * L14 )
+	return Lmm/4./ma.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
+
 
 Pbasez = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), Ng)
 Mbnz = np.linspace(5.0, 11.5, Ng)
+Mavgs = np.zeros(Ng)
+Lmms = np.linspace(22.0, 25.5, Ng)
+LmmsHi = np.linspace(22.0, 25.5, NgHi)
+FlxsL = FlxfrmL(10.**Lmms, ztst, h, Om, OL)/mJy2cgs
+FlxsM = FlxfrmM(10.**Mbnz*Msun, f_Edd, ztst, h, Om, OL)/mJy2cgs
 
 
 Int_grid = np.zeros([Ng,Ng])
-Flxmns = np.zeros([Ng,Ng])
+Flxmns = np.zeros([NgHi,NgHi])
 abnds = np.zeros([NgHi,NgHi])
 nubnds = np.zeros([NgHi,NgHi])
 
@@ -183,17 +211,22 @@ if (fEdd_Dist):
 	for k in range(sumz):
 		for i in range(0,Ng):
 			for j in range(0,Ng):
-				Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, f_Edd)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas_Mbn(10**Mbnz[i]*Msun, ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-				Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, 0.001)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+				Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+
+				#Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+				
+			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i])
 	Int_grid = Int_grid/sumz
-	Flxmns = Flxmns/sumz
+	#Flxmns = Flxmns/sumz
 	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun))
+	Mavgs = np.log10(Mavgs/sumz)
 else:		
 	for i in range(0,Ng):
 		for j in range(0,Ng):
 			Int_grid[j][i] = Fbin_Integrand_GWgas(np.log10(Mbn2Lmm(10**Mbnz[i]*Msun, f_Edd)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-			Flxmns[j][i]   = Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+
+			
 
 	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun, f_Edd))
 
@@ -202,6 +235,16 @@ for i in range(0, NgHi):
 		for j in range(0,NgHi):
 			abnds[j][i]    = asep_bnd(10**PbasezHi[j]*yr2sec, 10**MbnzHi[i]*Msun, ztst, thMn, h, Om, OL, Pbase, KQ)
 			nubnds[j][i]   = nubnd(10**PbasezHi[j]*yr2sec, 10**MbnzHi[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
+
+if (fEdd_Dist):
+	for i in range(0, NgHi):
+		for j in range(0,NgHi):
+			Flxmns[j][i]  = FlxnuL(ztst, LmmsHi[i], f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+else:	
+	for i in range(0, NgHi):
+		for j in range(0,NgHi):
+			Flxmns[j][i]   = Flxnu(ztst, 10**MbnzHi[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+	
 
 # abnds   = asep_bnd(10**Pbasez*yr2sec, 10**Mbnz*Msun, ztst, thMn, h, Om, OL, Pbase)
 # nubnds  = nubnd(10**Pbasez*yr2sec, 10**Mbnz*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
@@ -217,20 +260,29 @@ for i in range(0, NgHi):
 
 	
 
-plt.figure(figsize=[7.5,6.6])
-
+fig=plt.figure(figsize=[7.5,6.6])
+ax = fig.add_subplot(111)
 # if (fEdd_Dist):
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g$" %(ztst))
 # else:
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g, $f_{\rm{Edd}} = 10^{%g}}$" %(ztst,np.log10(f_Edd)), fontsize=14)
-plt.title(r"$\frac{d^2N}{dL dz} L z \mathcal{F}$", fontsize=15)
+#plt.title(r"$\frac{d^2N}{dL dz} L z \mathcal{F}$", fontsize=15)
 
 ### integrand contours
-cnt = plt.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+#cnt = plt.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+if (fEdd_Dist):
+	ax.contourf(np.log10(FlxsL), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+	ax2 = ax.twiny()
+	ax2.contourf(Mavgs, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+else:
+	ax.contourf(np.log10(FlxsM), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+	ax2 = ax.twiny()
+	ax2.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+
 
 ##Fmin bounds
-plt.contourf(Mbnz, Pbasez, np.log10(Flxmns-0.5), colors="black", alpha=0.3, zorder=10)
-plt.contour(Mbnz, Pbasez, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
+plt.contourf(MbnzHi, PbasezHi, np.log10(Flxmns-0.5), colors="black", alpha=0.3, zorder=10)
+plt.contour(MbnzHi, PbasezHi, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
 
 ##asep bounds
 plt.contourf(MbnzHi, PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
@@ -269,8 +321,18 @@ plt.figtext(0.17,0.27, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=
 plt.figtext(0.17,0.22, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=14)
 plt.figtext(0.17,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=14)
 
-plt.ylabel(r'$\rm{log}_{10}[P_{\rm{base}}/yr]$')
-plt.xlabel(r'$\rm{log}_{10}[M/M_{\odot}]$')
+
+if (fEdd_Dist):
+	ax.set_ylabel(r'$\rm{log}_{10}[P_{\rm{base}}/yr]$')
+	ax2.set_xlabel(r'$\rm{log}_{10}\left<M/M_{\odot}\right>$')
+	ax.set_xlabel(r'$\rm{log}_{10}[F_{mm}/\rm{mJy}]$')
+	ax2.set_xlim(5,11.5)
+else:
+	ax.set_ylabel(r'$\rm{log}_{10}[P_{\rm{base}}/yr]$')
+	ax2.set_xlabel(r'$\rm{log}_{10}[M/M_{\odot}]$')
+	ax.set_xlabel(r'$\rm{log}_{10}[F_{mm}/\rm{mJy}]$')
+
+
 
 plt.tight_layout()
 
