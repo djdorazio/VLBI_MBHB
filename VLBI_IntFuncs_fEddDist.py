@@ -17,11 +17,12 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #JET CONSTANTS
 nummGHz = c/0.1/1.e9 ##1mm in GHz
-thobs = 0.1 ##Eval at thobs such that nu_SSA is max, most conservative?
-gamj = 10. ##typical, maybe high
+gamj = 10.0 ##typical, maybe high
+thobs = 1./gamj#ma.pi/4. ##Eval at thobs such that nu_SSA is max, most conservative?
 ke = 1.0 #constant order unity
 Delc = np.log(1.e5) ##COul log of rmax/rmin
 Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
+
 
 xminDraw = -6.0 
 aDraw = -0.3 
@@ -33,8 +34,8 @@ sigDraw = 0.3
 Ntrap_z = 81 #25
 Ntrap_L = 81 #25
 
-Ntrp_P = 41
-Ntrp_q = 31
+Ntrp_P = 61
+Ntrp_q = 41
 
 Lmx = 31.0#10.*30
 #Lmx = 25.0 ##LLAGN
@@ -257,6 +258,16 @@ def Dopj(gamj, thobs):
 def L44(fEdd, M, ke, Delc, Lam):
 	return fEdd*LEdd_Fac*M/10.**(44) * ( Delc*(1. + 2./3.*ke*Lam) )
 
+
+
+def L44_L(Lmm, ke, Delc, Lam):
+	BCUV = 4.2 
+	nu14 = 1.4e9
+	numm = c/(0.1)
+	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
+	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	return Lbol/10.**(44.) * ( Delc*(1. + 2./3.*ke*Lam) )
+
 #rob in pc
 def nu_SSA(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
 	# From mathemaetica notebook "mmemissregion_critera"
@@ -268,7 +279,7 @@ def BofL(L44, rob, fEdd, M, thobs, gamj, ke, Delc, Lam): ##all in cgs -> Gauss
 	# From mathemaetica notebook "mmemissregion_critera"
 	#return (20000000000000000000000.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
 	#return (2.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
-	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44)
+	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44*10.**44)
 
 
 def nu_loss(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
@@ -276,6 +287,24 @@ def nu_loss(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
 	#return 0.07/(1. + z)* gamj**(2.)*(betj(gamj))**(2.)*(Dopj(gamj, thobs))/np.sin(thobs)/(BofL(L44(fEdd, M, ke, Delc, Lam), 1, fEdd, M, thobs, gamj, ke, Delc, Lam))**3 * rob   ##this is B at 1pc as per Eqn 21 BK79
 	return 0.07/(1.+z) * gamj**2. * betj(gamj)**2. * Dopj(gamj, thobs)/np.sin(thobs) * (BofL(L44(fEdd, M, ke, Delc, Lam), 1.0, fEdd, M, thobs, gamj, ke, Delc, Lam))**(-3.) * rob
 
+
+def nu_SSA_L(z, rob, Lmm, thobs, gamj, ke, Delc, Lam):
+	# From mathemaetica notebook "mmemissregion_critera"
+	#return (3.*ke**0.3333333333333333*(Dopj(gamj,thobs))**0.6666666666666666*(L44(fEdd,M,ke,Delc,Lam))**0.6666666666666666*(np.sin(thobs))**0.6666666666666666)/(gamj**0.3333333333333333*(Delc*(1. + (2.*ke*Lam)/3.))**0.6666666666666666*rob*(1. + z)* (betj(gamj))**0.6666666666666666)  
+	return 3./(1.+z) * ke**(1./3.) * (Delc*(1.+2./3.*ke*Lam))**(-2./3.) * gamj**(-4./3.) * betj(gamj)**(-2./3.) * Dopj(gamj,thobs)**(2./3.) * ((1./gamj)/np.sin(thobs) )**(-1.) * np.sin(thobs)**(-1./3.) * (L44_L(Lmm,ke,Delc,Lam))**(2./3.) / rob
+
+#rob in pc
+def BofL_L(L44, rob, thobs, gamj, ke, Delc, Lam): ##all in cgs -> Gauss
+	# From mathemaetica notebook "mmemissregion_critera"
+	#return (20000000000000000000000.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
+	#return (2.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
+	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44*10.**(44))
+
+
+def nu_loss_L(z, rob, Lmm, thobs, gamj, ke, Delc, Lam):
+	# From mathemaetica notebook "mmemissregion_critera"
+	#return 0.07/(1. + z)* gamj**(2.)*(betj(gamj))**(2.)*(Dopj(gamj, thobs))/np.sin(thobs)/(BofL(L44(fEdd, M, ke, Delc, Lam), 1, fEdd, M, thobs, gamj, ke, Delc, Lam))**3 * rob   ##this is B at 1pc as per Eqn 21 BK79
+	return 0.07/(1.+z) * gamj**2. * betj(gamj)**2. * Dopj(gamj, thobs)/np.sin(thobs) * (BofL_L(L44_L(Lmm, ke, Delc, Lam), 1.0, thobs, gamj, ke, Delc, Lam))**(-3.) * rob
 
 
 
@@ -323,17 +352,37 @@ def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
 	##DO WE WANT REST FRAME ASEP??
 
-	Tres = P*0.0#
-	
+	Tres = P*0.0
+	#fEdd = 0.001
 	for i in range(Ntrp_q):
 		for j in range(Ntrp_P):
-			if (nu_SSA(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
 				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+			#else:
+			#	print "mm too big"
+	return Tres
+	
+	#return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
+
+
+
+def tres_intnu_L(P, qs, M, MdEff, eps, fEdd, tEdd, z, Lmm):
+	##Check if emission region is larger than binary orbit, if so make tres=0
+	##DO WE WANT REST FRAME ASEP??
+
+	Tres = P*0.0
+	#fEdd = 0.001
+	for i in range(Ntrp_q):
+		for j in range(Ntrp_P):
+			if (nu_SSA_L(z, asep(P[i][j],M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss_L(z, asep(P[i][j],M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+				#print "mm right size"
+			else:
+				Tres[i][j] = 0.0
+			#	print "mm too big"
 	return Tres
 
-
-
-
+	#return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
 
 
 def tres_int_ALL(P, qs, M, MdEff, eps, tEdd):
@@ -376,6 +425,39 @@ def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 
 
 
+def FNum_nmr_L(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL, Lmm):
+	MEdd = LEdd_Fac/(MdEff*c*c)
+	tEdd = 1./MEdd
+
+	eps = eps/tEdd
+	thmn = thMn
+
+
+	Npc = KQ*pc2cm
+	PMax = PmaxNPC(KQ*pc2cm, M)
+	Pbase = np.minimum(Pbase, PMax*(1.+z))
+	PMin = np.maximum( PminRes(M, thmn, z, h, Om, OL), PISCO(M) ) ##rest frame
+
+
+	if (Pbase<=PMin*(1.+z) or qmin>=1.0):
+		return 0.0
+	else:
+		
+		Ps  = np.linspace(PMin, Pbase/(1.+z), Ntrp_P) ##integrate in rest frame
+		qss = np.linspace(qmin, 1.0, Ntrp_q)
+
+		Ivar = np.meshgrid(Ps, qss) 
+
+		dP = ( Pbase/(1.+z) - PMin)/Ntrp_P
+		dq = (1.0-qmin)/Ntrp_P
+		
+	 	#return intg.dblquad(tres_int, qmin, 1.0, lambda qs: PMin, lambda nu: Pbase/(1.+z),  args =(M, MdEff, eps, tEdd), epsabs=myabs, epsrel=myrel )[0]
+		return np.trapz(  np.trapz(  tres_intnu_L(Ivar[0], Ivar[1], M, MdEff, eps, fEdd, tEdd, z, Lmm), dx=dP, axis=0), dx=dq, axis=0)
+
+
+
+
+
 def FDen_nmr(z, M, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
 
 	MEdd = LEdd_Fac/(MdEff*c*c)
@@ -401,11 +483,30 @@ def FDen_nmr(z, M, thMn, qmin, eps, KQ, MdEff, xi, h, Om, OL):
 		
 		return np.trapz(  np.trapz(  tres_int_ALL(Ivar[0], Ivar[1], M,  MdEff, eps, tEdd), dx=dP, axis=0), dx=dq, axis=0)
 
-
-
 def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
 
 	Numr = FNum_nmr(z, M, thMn, qmin_EHT, eps_CBD, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL)
+	Dnmr = FDen_nmr(z, M, thMn, qmin_POP, eps_CBD, KQ, MdEff, xi, h, Om, OL)
+
+	if (Dnmr == 0.0):
+		FF = 0.0
+	else:
+		FF = Numr/Dnmr
+
+	if (FF>1.0):
+		#print "frac>1!" # - DOES THIS HAPPEN - no only if 1.000000001 roundoff
+		#print FF
+		FF = 1.0
+	#if (FF<0):
+	#	FF=0.0
+
+	return np.maximum(fbin * FF, 1.e-14)
+
+
+
+def fbin_GWgas_L(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm):
+
+	Numr = FNum_nmr_L(z, M, thMn, qmin_EHT, eps_CBD, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL, Lmm)
 	Dnmr = FDen_nmr(z, M, thMn, qmin_POP, eps_CBD, KQ, MdEff, xi, h, Om, OL)
 
 	if (Dnmr == 0.0):
@@ -520,7 +621,8 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	# Lmin comes in W so correct to erg/s here
 	Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 
-	return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	#return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	return fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 
 
 

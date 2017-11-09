@@ -340,7 +340,7 @@ if (fEdd_Dist==True):
 	plt.xlabel(r'$\log_{10}{f_{\rm{GW}}}$')
 	plt.ylabel(r'$\log_{10}{h_c}$')
 
-	plt,xlim(-10.,-5.)
+	plt.xlim(-10.,-5.)
 
 	plt.tight_layout()
 

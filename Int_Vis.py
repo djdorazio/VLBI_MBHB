@@ -20,16 +20,16 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
-ztst=0.5
+ztst=0.2
 
 if (fEdd_Dist):
-	Ng = 20
+	Ng = 10
 else:
-	Ng = 100
+	Ng = 10
 sumz = 100
-NgHi = 200
+NgHi = 100
 
 
 if (fEdd_Dist):
@@ -169,6 +169,14 @@ def nubnd(P, M, z, fEdd, thobs, gamj, ke, Delc, Lam):
 		return 1.0
 
 
+def nubnd_L(P, M, z, Lmm, thobs, gamj, ke, Delc, Lam):
+	P = P/(1.+z)
+	if (nu_SSA_L(z, asep(P,M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss_L(z, asep(P,M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+		return 0.0
+	else:
+		return 1.0
+
+
 def FlxfrmL(Lmm, z, h, Om, OL):
 	return Lmm*1.e7/4./ma.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 
@@ -183,22 +191,31 @@ def FlxfrmM(Mbn, f_Edd, z, h, Om, OL):
 	return Lmm/4./ma.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 
 
+PbasezHi = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), NgHi)
+MbnzHi = np.linspace(5.0, 11.5, NgHi)
+
 Pbasez = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), Ng)
 Mbnz = np.linspace(5.0, 11.5, Ng)
+
 Mavgs = np.zeros(Ng)
 Lmms = np.linspace(22.0, 25.5, Ng)
 LmmsHi = np.linspace(22.0, 25.5, NgHi)
 FlxsL = FlxfrmL(10.**Lmms, ztst, h, Om, OL)/mJy2cgs
+FlxsLHi = FlxfrmL(10.**LmmsHi, ztst, h, Om, OL)/mJy2cgs
 FlxsM = FlxfrmM(10.**Mbnz*Msun, f_Edd, ztst, h, Om, OL)/mJy2cgs
+FlxsMHi = FlxfrmM(10.**MbnzHi*Msun, f_Edd, ztst, h, Om, OL)/mJy2cgs
 
 
 Int_grid = np.zeros([Ng,Ng])
+nubnds_avg = np.zeros([Ng,Ng])
+
 Flxmns = np.zeros([NgHi,NgHi])
 abnds = np.zeros([NgHi,NgHi])
 nubnds = np.zeros([NgHi,NgHi])
+nubnds_avgHi = np.zeros([NgHi,NgHi])
 
-PbasezHi = np.linspace(-1.0, np.log10(2.*Pbase/yr2sec), NgHi)
-MbnzHi = np.linspace(5.0, 11.5, NgHi)
+
+
 
 
 #Int_grid_avg = np.zeros([Ng,Ng])
@@ -213,7 +230,7 @@ if (fEdd_Dist):
 			for j in range(0,Ng):
 				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, 0.001)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-
+				nubnds_avg[j][i]   = nubnd_L(10**Pbasez[j]*yr2sec, Lmm2Mbn_draw(Lmms[i])*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
 				#Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
 				
 			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i])
@@ -221,6 +238,8 @@ if (fEdd_Dist):
 	#Flxmns = Flxmns/sumz
 	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun))
 	Mavgs = np.log10(Mavgs/sumz)
+	nubnds_avg = nubnds_avg/sumz
+	#Mavgs = Mavgs/sumz
 else:		
 	for i in range(0,Ng):
 		for j in range(0,Ng):
@@ -240,6 +259,12 @@ if (fEdd_Dist):
 	for i in range(0, NgHi):
 		for j in range(0,NgHi):
 			Flxmns[j][i]  = FlxnuL(ztst, LmmsHi[i], f_Edd, h, Om, OL, Fmin,fEdd_Dist)
+	
+	# for k in range(sumz):
+	# 	for i in range(0, NgHi):
+	# 		for j in range(0,NgHi):
+	# 					nubnds_avgHi[j][i]   = nubnd_L(10**PbasezHi[j]*yr2sec, Lmm2Mbn_draw(LmmsHi[i])*Msun, ztst, LmmsHi[i], thobs, gamj, ke, Delc, Lam)
+	# nubnds_avg = nubnds_avg/sumz
 else:	
 	for i in range(0, NgHi):
 		for j in range(0,NgHi):
@@ -262,41 +287,102 @@ else:
 
 fig=plt.figure(figsize=[7.5,6.6])
 ax = fig.add_subplot(111)
+
+
+
 # if (fEdd_Dist):
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g$" %(ztst))
 # else:
 # 	plt.title(r"$\frac{dN^2}{dL dz}\Delta L\Delta z \mathcal{F}$, z=%g, $f_{\rm{Edd}} = 10^{%g}}$" %(ztst,np.log10(f_Edd)), fontsize=14)
-#plt.title(r"$\frac{d^2N}{dL dz} L z \mathcal{F}$", fontsize=15)
+# plt.title(r"$\frac{d^2N}{dL dz} L z \mathcal{F}$", fontsize=15)
 
-### integrand contours
+# integrand contours
 #cnt = plt.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+
+
+
+
+
 if (fEdd_Dist):
 	ax.contourf(np.log10(FlxsL), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
 	ax2 = ax.twiny()
-	ax2.contourf(Mavgs, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+	new_tick_locations = ax.get_xticks()
+	def tick_function(Ms):
+		return ["%.1f" % z for z in Ms]
+
+	ax2.set_xlim(ax.get_xlim())
+	ax2.set_xticks(new_tick_locations)
+	ax2.set_xticklabels(tick_function(Mavgs))
+	#ax2.contourf(Mavgs, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+
+	#cbar = plt.colorbar(cnt)
+	lms = ax.contour(np.log10(FlxsL), Pbasez, np.log10(Int_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],zorder=5)
+	ax.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=14)	
+
+
 else:
 	ax.contourf(np.log10(FlxsM), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
 	ax2 = ax.twiny()
+
+	# new_tick_locations = ax.get_xticks()
+	# def tick_function(Ms, new_tick_locations):
+	# 	len(Ms)/len(new_tick_locations)
+	# 	return ["%.1f" % z for z in Ms]
+
+	# ax2.set_xlim(ax.get_xlim())
+	# ax2.set_xticks(new_tick_locations)
+	# ax2.set_xticklabels(tick_function(Mbnz))
 	ax2.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+
+	#cbar = plt.colorbar(cnt)
+	lms = ax.contour(np.log10(FlxsM), Pbasez, np.log10(Int_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],zorder=5)
+	ax.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=14)	
+
+
+# ax2 = fig.add_subplot(111)
+# ax2.contourf(np.log10(FlxsL), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
+# lms = ax2.contour(np.log10(FlxsL), Pbasez, np.log10(Int_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],zorder=5)
+# ax2.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=14)	
+
+
+
+##asep bounds
+# ax2.contourf(MbnzHi, PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
+# ax2.contour(MbnzHi, PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
+
+
 
 
 ##Fmin bounds
-plt.contourf(MbnzHi, PbasezHi, np.log10(Flxmns-0.5), colors="black", alpha=0.3, zorder=10)
-plt.contour(MbnzHi, PbasezHi, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
+if (fEdd_Dist):
+	ax.contourf(np.log10(FlxsLHi), PbasezHi, np.log10(Flxmns-0.5), colors="black", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsLHi), PbasezHi, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
 
-##asep bounds
-plt.contourf(MbnzHi, PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
-plt.contour(MbnzHi, PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
+	##nu bounds
+	ax.contourf(np.log10(FlxsL), Pbasez, np.log10(nubnds_avg-0.5), colors="yellow", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsL), Pbasez, nubnds_avg, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
+
+	##asep bounds
+	ax.contourf(np.log10(FlxsLHi), PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsLHi), PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
 
 
-##nu bounds
-plt.contourf(MbnzHi, PbasezHi, np.log10(nubnds), colors="yellow", alpha=0.3, zorder=10)
-plt.contour(MbnzHi, PbasezHi, nubnds, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
+else:
+	ax.contourf(np.log10(FlxsMHi), PbasezHi, np.log10(Flxmns), colors="black", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsMHi), PbasezHi, Flxmns, colors="black", linewidths=[3], levels = [0.5], zorder=10)
+	##nu bounds
+	ax.contourf(np.log10(FlxsMHi), PbasezHi, np.log10(nubnds), colors="yellow", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsMHi), PbasezHi, nubnds, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
+
+	##asep bounds
+	ax.contourf(np.log10(FlxsMHi), PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
+	ax.contour(np.log10(FlxsMHi), PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
 
 
-#cbar = plt.colorbar(cnt)
-lms = plt.contour(Mbnz, Pbasez, np.log10(Int_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
-plt.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=14)	
+# ax2.contourf(MbnzHi, PbasezHi, np.log10(nubnds), colors="yellow", alpha=0.3, zorder=10)
+# ax2.contour(MbnzHi, PbasezHi, nubnds, colors="yellow", linewidths=[3], linestyle=":", levels = [0.5], zorder=10)
+
+
 
 #Diags
 #plt.plot(Mbnz, np.log10(PminRes(10.**Mbnz*Msun, thMn, ztst, h, Om, OL)/yr2sec ) )
@@ -326,7 +412,7 @@ if (fEdd_Dist):
 	ax.set_ylabel(r'$\rm{log}_{10}[P_{\rm{base}}/yr]$')
 	ax2.set_xlabel(r'$\rm{log}_{10}\left<M/M_{\odot}\right>$')
 	ax.set_xlabel(r'$\rm{log}_{10}[F_{mm}/\rm{mJy}]$')
-	ax2.set_xlim(5,11.5)
+	#ax2.set_xlim(Mavgs[0], Mavgs[Ng-2])
 else:
 	ax.set_ylabel(r'$\rm{log}_{10}[P_{\rm{base}}/yr]$')
 	ax2.set_xlabel(r'$\rm{log}_{10}[M/M_{\odot}]$')

@@ -192,7 +192,7 @@ def BofL(L44, rob, fEdd, M, thobs, gamj, ke, Delc, Lam): ##all in cgs -> Gauss
 	# From mathemaetica notebook "mmemissregion_critera"
 	#return (20000000000000000000000.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
 	#return (2.*np.sqrt(L44))/(np.sqrt(c*np.sqrt(1. - gamj**(-2.)))*np.sqrt(Delc*(1. + (2.*ke*Lam)/3.))*pc2cm*rob)
-	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44)
+	return 2. * (Delc*(1.+2./3.*ke*Lam))**(-1./2.) * 1./gamj * (c*betj(gamj) )**(-1./2.) * gamj/(pc2cm*rob) * np.sqrt(L44*10.**44)
 
 
 def nu_loss(z, rob, fEdd, M, thobs, gamj, ke, Delc, Lam):
