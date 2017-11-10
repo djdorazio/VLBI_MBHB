@@ -346,9 +346,9 @@ if (fEdd_Dist==True):
 	plt.tight_layout()
 
 
-	plt.figtext(0.8,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
-	plt.figtext(0.8,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
-	plt.figtext(0.8,0.75, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
+	plt.figtext(0.78,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+	plt.figtext(0.78,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
+	plt.figtext(0.78,0.75, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
 
 
 		
