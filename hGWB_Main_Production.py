@@ -20,8 +20,8 @@ import math as ma
 ## method optioncs
 fEdd_Dist = True
 
-Nh = 10
-Ntrial = 2
+Nh = 20
+Ntrial = 40
 
 if (fEdd_Dist):
 	import GWB_IntFuncs_fEddDist as hGWB 

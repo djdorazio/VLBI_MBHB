@@ -20,6 +20,16 @@ import GWB_IntFuncs as hGWB
 from GWB_IntFuncs import *
 
 
+
+###PLOTTING OPTIONS
+CntPlt_CumZ = True
+CntPlt_DZ = False
+
+##INT options
+TrapInt = True
+
+
+
 ## method optioncs
 fEdd_Dist = True
 
@@ -32,13 +42,11 @@ else:
 	from VLBI_IntFuncs_V2 import *
 
 
+##Instrument params
+Fmin = 10.0 * mJy2cgs
+thMn = 1.0 * mu_as2rad 
+Pbase = 10.0*yr2sec
 
-##INT options
-TrapInt = True
-
-###PLOTTING OPTIONS
-CntPlt_CumZ = True
-CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
 Mmx_Pbase = True
@@ -113,11 +121,6 @@ qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS
 
 zeval = 0.5  #eval at this z
 zmax = 5.0 ### integrateo out to zmax=5.0
-
-##Instrument params
-Fmin = 10.0 * mJy2cgs
-thMn = 1.0 * mu_as2rad 
-Pbase = 10.0*yr2sec
 
 
 
