@@ -60,7 +60,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 
 ##IMPORTANT PARAMS HERE
-fbin = 0.01
+fbin = 0.1
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
@@ -136,9 +136,9 @@ p0 = [zeval, eps, KQ]
 #if not fitting:
 pnoFit = [eps, KQ]
 
-thmin_max = 30.0
+thmin_max = 20.0
 Nz = 5
-Ng = int(1.*thmin_max)
+Ng = int(1.*thmin_max)/2
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)

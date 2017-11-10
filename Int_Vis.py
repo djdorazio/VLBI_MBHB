@@ -22,15 +22,15 @@ from GWB_IntFuncs import *
 ## method optioncs
 fEdd_Dist = True
 
-ztst=0.5
+ztst=0.05
 f_Edd = 10**(-4.6)  
 
 if (fEdd_Dist):
 	Ng = 20
 else:
-	Ng = 20
+	Ng = 100
 sumz = 200
-NgHi = 100
+NgHi = 200
 
 
 if (fEdd_Dist):
@@ -251,7 +251,7 @@ if (fEdd_Dist):
 				nubnds_avg[j][i] = nubnds_avg[j][i] + nubnd_L(10**Pbasez[j]*yr2sec, Lmm2Mbn_draw(Lmms[i])*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
 				#Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
 			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i]) * np.minimum(np.exp(-(Lmm2Mbn_draw(Lmms[i])/Mmx)**4), 1.0)
-			
+		print "step %g/%g" %(k, sumz)
 	Int_grid = Int_grid/sumz
 	#Flxmns = Flxmns/sumz
 	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun))

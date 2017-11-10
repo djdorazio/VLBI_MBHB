@@ -42,10 +42,7 @@ else:
 	from VLBI_IntFuncs_V2 import *
 
 
-##Instrument params
-Fmin = 10.0 * mJy2cgs
-thMn = 1.0 * mu_as2rad 
-Pbase = 10.0*yr2sec
+
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
@@ -86,7 +83,10 @@ mJy2cgs = 10.**(-26)
 
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
-
+##Instrument params
+Fmin = 10.0 * mJy2cgs
+thMn = 1.0 * mu_as2rad 
+Pbase = 10.0*yr2sec
 
 
 

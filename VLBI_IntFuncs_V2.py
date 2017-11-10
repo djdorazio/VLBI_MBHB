@@ -31,7 +31,7 @@ Ntrap_L = 161 #25
 Ntrp_P = 61
 Ntrp_q = 31
 
-Lmx = 32.0#10.*30
+Lmx = 31.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
