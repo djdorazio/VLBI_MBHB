@@ -25,11 +25,11 @@ Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 81 #25
+Ntrap_L = 81 #25
 
-Ntrp_P = 61
-Ntrp_q = 31
+Ntrp_P = 41
+Ntrp_q = 41
 
 Lmx = 32.0#10.*30
 #Lmx = 25.0 ##LLAGN
@@ -434,13 +434,15 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	#  Lmin comes in W so correct to erg/s here
 	
 
-	Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 	
 
 	#FF = fbin_GWgas(z, M, thMn, qmin, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 	#dMbn = Mbn/(Lmm*1.e7) * Msun
 
-	return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+
+
+	return np.minimum(np.exp(-(Mbn/Mmx)**4), 1.0) * fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 
 
 

@@ -34,8 +34,8 @@ sigDraw = 0.3
 Ntrap_z = 81 #25
 Ntrap_L = 81 #25
 
-Ntrp_P = 61
-Ntrp_q = 41
+Ntrp_P = 41
+Ntrp_q = 31
 
 Lmx = 31.0#10.*30
 #Lmx = 25.0 ##LLAGN
@@ -315,10 +315,6 @@ def fGW_int(P, qs, M):
 
 
 def fGas_int(qs, eps):
-	# MEdd = LEdd_Fac/(MdEff*c*c)
-	# tEdd = 1./MEdd
-
-	# eps = eps/tEdd
 	return qs/(4.*eps)  ## eps passed here is eps/tEdd
 
 # def tres_int(P, qs, M, MdEff, eps, fEdd, tEdd, z):
@@ -350,8 +346,7 @@ def fGas_int(qs, eps):
 
 def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
-	##DO WE WANT REST FRAME ASEP??
-
+	## settning rest frame asep = robs max
 	Tres = P*0.0
 	#fEdd = 0.001
 	for i in range(Ntrp_q):
@@ -374,11 +369,11 @@ def tres_intnu_L(P, qs, M, MdEff, eps, fEdd, tEdd, z, Lmm):
 	#fEdd = 0.001
 	for i in range(Ntrp_q):
 		for j in range(Ntrp_P):
-			if (nu_SSA_L(z, asep(P[i][j],M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss_L(z, asep(P[i][j],M)/pc2cm, Lmm, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+			if (nu_SSA_L(z, asep(P[i][j],M)/pc2cm/2.0, Lmm, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss_L(z, asep(P[i][j],M)/pc2cm/2.0, Lmm, thobs, gamj, ke, Delc, Lam)>=nummGHz):
 				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
 				#print "mm right size"
-			else:
-				Tres[i][j] = 0.0
+			# else:
+			# 	Tres[i][j] = 0.0
 			#	print "mm too big"
 	return Tres
 
@@ -386,12 +381,10 @@ def tres_intnu_L(P, qs, M, MdEff, eps, fEdd, tEdd, z, Lmm):
 
 
 def tres_int_ALL(P, qs, M, MdEff, eps, tEdd):
-	##Cdont cut out those with too large an emission region (for denominator fo prob)
+	##Cdont cut out those with too large an emission region (for denominator of prob)
 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd
 
 
-# def tres_int2(qs, P, M, MdEff, eps, tEdd):
-# 	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps) )/tEdd
 
 def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 	MEdd = LEdd_Fac/(MdEff*c*c)
@@ -425,12 +418,11 @@ def FNum_nmr(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL):
 
 
 
-def FNum_nmr_L(z, M, thMn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL, Lmm):
+def FNum_nmr_L(z, M, thmn, qmin, eps, fEdd, Pbase, MdEff, xi, KQ, h, Om, OL, Lmm):
 	MEdd = LEdd_Fac/(MdEff*c*c)
 	tEdd = 1./MEdd
 
 	eps = eps/tEdd
-	thmn = thMn
 
 
 	Npc = KQ*pc2cm
@@ -555,7 +547,7 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	#return Mbn
-	return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
+	return np.maximum(np.minimum(Mmx*1., Mbn), 0.0)
 
 
 
@@ -568,7 +560,7 @@ def Lmm2Mbn_draw(Lmm):
 	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	return Mbn
-	#return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
+	#return np.maximum(np.minimum(5.*10.**10, Mbn), 0.0)
 
 
 
@@ -619,10 +611,15 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 	#NOTE THAT we could allow f_Edd to be eps above, but the frac LEdd that L is doesnt have to be linked to CBD accretion rat which drives migration
 	# Lmin comes in W so correct to erg/s here
-	Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 
-	#return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
-	return fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+
+	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
+
+	# if (Mbn > Mmx):
+	# 	return np.exp(-Mbn/Mx) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+	# else:
+	# 	#return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	return np.minimum(np.exp(-(Mbn/Mmx)**4), 1.0) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 
 
 

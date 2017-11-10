@@ -20,13 +20,17 @@ import math as ma
 ## method optioncs
 fEdd_Dist = True
 
+Nh = 10
+Ntrial = 2
 
 if (fEdd_Dist):
 	import GWB_IntFuncs_fEddDist as hGWB 
 	from GWB_IntFuncs_fEddDist import *
+	fbin = 0.1 
 else:
 	import GWB_IntFuncs as hGWB 
 	from GWB_IntFuncs import *
+	fbin = 1.0 
 
 
 
@@ -69,11 +73,11 @@ mJy2cgs = 10.**(-26)
 
 
 
-fbin = 1.0
+
 #Accretion Params
 KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
 eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
+f_Edd = 0.001  ## sets L to M connection (accretion rate onto shining BH)
 MdEff = 0.1
 
 ## binary pop params
@@ -81,10 +85,10 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 zeval = 0.5  #eval at this z
-zmax = 10.0 ### integrateo out to zmax=5.0
+zmax = 5.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
-Fmin = 1.0 * mJy2cgs
+Fmin = 0.0 * mJy2cgs ## no lum cut for GWB case
 thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
@@ -117,9 +121,10 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 200000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 200000.*10.**10*Msun
-Mmin= 0.0*10.**5*Msun 
+###
+Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 2.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
 
@@ -245,8 +250,7 @@ plt.savefig(Savename)
 
 
 
-Nh = 10
-Ntrial = 10
+
 fPTAs = np.linspace(-10, -5, Nh)
 hs = np.zeros([Nh,Ntrial])
 
@@ -263,7 +267,6 @@ hoff_10 = np.zeros(Nh)
 hGW = hPTA * (10.**fPTAs/(fPTA))**(-2./3)
 #hGW = 10.**(-15) * (10.**fPTAs/(1./yr2sec))**(-2./3)
 if (fEdd_Dist==True):
-	fbin = 0.01
 	for i in range(Nh):	
 		for j in range(Ntrial):
 			hs[i][j] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
@@ -279,8 +282,6 @@ if (fEdd_Dist==True):
 		# hoff_9[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 		# hoff_10[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin*0.001, h, Om, OL)
 else:
-	fbin = 1.0
-	f_Edd = 1.0
 	for i in range(Nh):	
 		hoff_1[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 		hoff_2[i] = -IntzZ_Trap_GWB_f([eps,  KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd*0.000001, xi, fbin, h, Om, OL)

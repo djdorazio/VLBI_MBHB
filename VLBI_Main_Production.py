@@ -42,7 +42,7 @@ CntPlt_DZ = False
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
 Mmx_Pbase = True
-fEdd_Npc = False
+fEdd_Npc = True
 Mdot_Npc = True
 qmin_Npc = True
 
@@ -140,10 +140,10 @@ OL=0.7
 
 
 
-###DEFUNCT
-Mmx = 2000000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 2000000.*10.**10*Msun
-Mmin= 0.0*10.**5*Msun 
+###
+Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 2.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
 
@@ -353,8 +353,8 @@ if (CntPlt_CumZ):
 		lms = plt.contour(fEdds, KQs, np.log10(Ntot_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])		
 		plt.clabel(lms, fmt = r'$10^{%g}$', colors = 'k', fontsize=15)	
 
-		GWB_lms = plt.contour(epss, fEdds, np.log10(hGWB_grid), colors='white', levels = [-16, -15, -14.5, -14, 13])
-		plt.clabel(GWB_lms, fmt = r'$10^{%g}$', colors = 'white', fontsize=14)	
+		# GWB_lms = plt.contour(epss, fEdds, np.log10(hGWB_grid), colors='white', levels = [-16, -15, -14.5, -14, 13])
+		# plt.clabel(GWB_lms, fmt = r'$10^{%g}$', colors = 'white', fontsize=14)	
 
 
 		plt.plot(fEdds, np.log10(RSGmx), color='red', linestyle=":")

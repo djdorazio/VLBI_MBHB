@@ -99,10 +99,10 @@ Om = 0.3
 OL=0.7
 
 
-Mmx = 2000000.*10.**10 ## jsut to not limit lum function - doesnt change anyhting when set at 2*10^10 number
-Mmax = 2000000.*10.**10*Msun
-Mmin= 0.**5*Msun 
-
+###
+Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 2.*10.**10*Msun
+Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
 

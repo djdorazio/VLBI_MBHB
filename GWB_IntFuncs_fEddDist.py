@@ -17,10 +17,10 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 61 #25
+Ntrap_L = 61 #25
 
-Ntrp_P = 61.
+Ntrp_P = 31.
 Ntrp_q = 31.
 
 
@@ -29,7 +29,7 @@ aDraw = -0.3
 x0Draw = -0.6
 sigDraw = 0.3
 
-Lmx = 32.0
+Lmx = 31.0
 
 
 ##################
@@ -400,9 +400,11 @@ def GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, 
 
 
 	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F
-	#Mbn = np.maximum( np.minimum(Mmx*10., Mbn), 10.**0)
-
-	return GWB_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**0)
+	# if (Mbn>Mmx):
+	#  	return np.exp(-Mbn/Mx) * GWB_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	#  else:
+	return np.minimum(np.exp(-(Mbn/Mmx)**4), 1.0) * GWB_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 
 
 
@@ -426,7 +428,7 @@ def GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbas
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 
 
-	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 10.**5)  ## we integrate L to large values, but cutoff M in F
+	Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.0)  ## we integrate L to large values, but cutoff M in F
 
 
 	return GWB_GWgas_f(z, Mbn*Msun, fGW, thMn, qmin_EHT, qmin_POP, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
