@@ -17,8 +17,8 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 101 #25
+Ntrap_L = 101 #25
 
 Ntrp_P = 61.
 Ntrp_q = 31.
@@ -155,11 +155,13 @@ def hc_int(P, qs, M, z, MdEff, eps, KQ, tEdd, h, Om, OL, xi):
 	if (P < 2.*ma.pi*6.**(1.5)*G*M/c/c/c): #this causes deviation from f^(-2/3)
 		#print "BHs are too close bra"
 		return 0.0*hPTA(P,M,qs,z, h, Om, OL)
-	elif (P>PmaxNPC(KQ*pc2cm, M)):
+	if (P>PmaxNPC(KQ*pc2cm, M)):
+		#print "beyond the disk"
 		tres =  tGW_int(P, qs, M)
 		return 2./3. * tres * 32./5. * G**(7./3.)/c**5 *( ma.pi*Mchirp(M, qs)*fGW(P) )**(10./3.) ##Has units of energy
 	else:
-		## eps is passed with a 1/tEdd o give a mult by tEdd here
+		#print "in the disk"
+		## eps is passed with a 1/tEdd to give a mult og fgas by tEdd here
 		tres = np.minimum( tGW_int(P, qs, M), fGas_int(qs, MdEff, eps))
 		return 2./3. * tres * 32./5. * G**(7./3.)/c**5 *( ma.pi*Mchirp(M, qs)*fGW(P) )**(10./3.) ##Has units of energy
 

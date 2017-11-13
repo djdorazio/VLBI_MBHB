@@ -34,7 +34,7 @@ sigDraw = 0.3
 Ntrap_z = 161 #25
 Ntrap_L = 161 #25
 
-Ntrp_P = 61
+Ntrp_P = 41
 Ntrp_q = 31
 
 Lmx = 31.0#10.*30
@@ -616,11 +616,14 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	#Mbn = np.maximum( np.minimum(Mmx, Mbn), 0.)  ## we integrate L to large values, but cutoff M in F - shouldnt lumfunc take care of this?
 
 	# if (Mbn > Mmx):
-	# 	return np.exp(-Mbn/Mx) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+	# 	return 0.0#np.exp(-Mbn/Mx) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 	# else:
-	# 	#return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
-	return np.minimum(np.exp(-(Mbn/Mmx)**4), 1.0) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+	# 	return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
+	
 
+	return np.exp(-(Mbn/Mmx)**20) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+
+	#return  fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 
 
 

@@ -20,13 +20,13 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 ztst=0.05
 f_Edd = 10**(-4.6)  
 
 if (fEdd_Dist):
-	Ng = 20
+	Ng = 10
 else:
 	Ng = 100
 sumz = 200
@@ -105,8 +105,8 @@ OL=0.7
 
 
 ###
-Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
-Mmax = 2.*10.**10*Msun
+Mmx = 1.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 1.*10.**10*Msun
 Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
@@ -247,11 +247,11 @@ if (fEdd_Dist):
 		for i in range(0,Ng):
 			for j in range(0,Ng):
 				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, 0.001)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-				Int_grid[j][i]   =  Int_grid[j][i] +  Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
+				Int_grid[j][i]   = Int_grid[j][i]   + Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				nubnds_avg[j][i] = nubnds_avg[j][i] + nubnd_L(10**Pbasez[j]*yr2sec, Lmm2Mbn_draw(Lmms[i])*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
 				#Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
-			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i]) * np.minimum(np.exp(-(Lmm2Mbn_draw(Lmms[i])/Mmx)**4), 1.0)
-		print "step %g/%g" %(k, sumz)
+			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i]) * np.exp(-(Lmm2Mbn_draw(Lmms[i])/Mmx)**20)
+		print "step %g/%g" %(k+1, sumz)
 	Int_grid = Int_grid/sumz
 	#Flxmns = Flxmns/sumz
 	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun))
@@ -265,8 +265,8 @@ else:
 			
 			
 
-	Int_grid = 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun, f_Edd))
-
+	Int_grid = np.maximum(1.e-14, np.nan_to_num( 4.*np.pi*ztst * Int_grid * np.log10(Mbn2Lmm(10**Mbnz[Ng/2]*Msun, f_Edd)) ) )
+ 
 
 
 if (fEdd_Dist):
@@ -295,11 +295,7 @@ else:
 # nubnds  = nubnd(10**Pbasez*yr2sec, 10**Mbnz*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
 
 
-### Shade resolvable separations
 
-
-
-### shade regio
 
 
 
@@ -465,7 +461,7 @@ else:
 
 plt.tight_layout()
 
-Savename = "diffN_fEddDist%g_zeval%g_fEdd%g_amx%g.png" %(fEdd_Dist, ztst, f_Edd, KQ)
+Savename = "diffN_fEddDist%g_zeval%g_fEdd%g_amx%g_avg%g.png" %(fEdd_Dist, ztst, f_Edd, KQ, sumz)
 
 Savename = Savename.replace('.', 'p')
 Savename = Savename.replace('ppng', '.png')
