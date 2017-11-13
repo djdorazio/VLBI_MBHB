@@ -326,80 +326,80 @@ if (fEdd_Dist==True):
 	hup = hl_mns+hl_stds
 
 
-plt.figure(figsize=[8,6])
-#plt.title("LLAGN")
+	plt.figure(figsize=[8,6])
+	#plt.title("LLAGN")
 
 
-plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
-plt.scatter(np.log10(fPTA), np.log10(hPTA), color='black', marker='*')
+	plt.plot(fPTAs, np.log10(hGW), color='gray', linestyle=':')
+	plt.scatter(np.log10(fPTA), np.log10(hPTA), color='black', marker='*')
 
-plt.plot(fPTAs, hl_mns, color = 'black',  alpha=0.5)
-plt.plot(fPTAs, hup, color = 'black',  alpha=0.5)
-plt.plot(fPTAs, hdwn, color = 'black',  alpha=0.5)
+	plt.plot(fPTAs, hl_mns, color = 'black',  alpha=0.5)
+	plt.plot(fPTAs, hup, color = 'black',  alpha=0.5)
+	plt.plot(fPTAs, hdwn, color = 'black',  alpha=0.5)
 
 
-plt.fill_between(fPTAs, hdwn, hup, color='gray')
+	plt.fill_between(fPTAs, hdwn, hup, color='gray')
 
-hst  = np.transpose(hs)
-hst2 = np.transpose(hs2)
-hst3 = np.transpose(hs3)
-hst4 = np.transpose(hs4)
-for j in range(Ntrial):
-	p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=3, zorder=10)
-	plt.scatter(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5)
-#
+	hst  = np.transpose(hs)
+	hst2 = np.transpose(hs2)
+	hst3 = np.transpose(hs3)
+	hst4 = np.transpose(hs4)
+	for j in range(Ntrial):
+		p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=3, zorder=10)
+		plt.scatter(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5)
+	#
+		if (plotmult):
+			p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5, linestyle="--")
+			plt.scatter(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5)
+	#
+			p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5, linestyle=":")
+			plt.scatter(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5)
+	#
+			p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.")
+			plt.scatter(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5)
+
+
+
+
+	plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
+
+	plt.axvspan(   np.log10(2./PminRes(1.e10*Msun, thMn, 3.0, h, Om, OL)),   np.log10(2./(10.*yr2sec)), color='orange', alpha=0.2, lw=0, hatch="+")
+
+
+	FminSv = Fmin/mJy2cgs/1000.
+	thMnSv = thMn/mu_as2rad 
+	PbaseSv = Pbase/yr2sec
+	Lmx_cgs = Lmx + 7.0
+
+
+
+	plt.xlabel(r'$\log_{10}{f_{\rm{GW}}}$')
+	plt.ylabel(r'$\log_{10}{h_c}$')
+
+	plt.xlim(-10.,-5.)
+
+	plt.tight_layout()
+
 	if (plotmult):
-		p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5, linestyle="--")
-		plt.scatter(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5)
-#
-		p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5, linestyle=":")
-		plt.scatter(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5)
-#
-		p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.")
-		plt.scatter(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5)
+		plt.figtext(0.15, 0.25, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+		plt.figtext(0.15,0.19, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"Fid., $a_{\rm{max}} = %g$pc, $\dot{\mathcal{M}}=%g$" %(KQ,eps), r"$10a_{\rm{max}}$", r"$10a_{\rm{max}}$, $0.01\dot{\mathcal{M}}$", r"$10a_{\rm{max}}$, $100\dot{\mathcal{M}}$"), (0.615, 0.725), fontsize = 12)#(0.685, 0.64), fontsize = 14)
+	else:
+		plt.figtext(0.78,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+		plt.figtext(0.78,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
+		plt.figtext(0.78,0.75, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
 
 
 
 
-plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
+	Savename = 'hc_of_fGW_LLAGN_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
 
-plt.axvspan(   np.log10(2./PminRes(1.e10*Msun, thMn, 3.0, h, Om, OL)),   np.log10(2./(10.*yr2sec)), color='orange', alpha=0.2, lw=0, hatch="+")
+	if (plotmult):
+		Savename = "PlotMult_"+Savename
 
-
-FminSv = Fmin/mJy2cgs/1000.
-thMnSv = thMn/mu_as2rad 
-PbaseSv = Pbase/yr2sec
-Lmx_cgs = Lmx + 7.0
-
-
-
-plt.xlabel(r'$\log_{10}{f_{\rm{GW}}}$')
-plt.ylabel(r'$\log_{10}{h_c}$')
-
-plt.xlim(-10.,-5.)
-
-plt.tight_layout()
-
-if (plotmult):
-	plt.figtext(0.15, 0.25, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
-	plt.figtext(0.15,0.19, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
-	plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"Fid., $a_{\rm{max}} = %g$pc, $\dot{\mathcal{M}}=%g$" %(KQ,eps), r"$10a_{\rm{max}}$", r"$10a_{\rm{max}}$, $0.01\dot{\mathcal{M}}$", r"$10a_{\rm{max}}$, $100\dot{\mathcal{M}}$"), (0.615, 0.725), fontsize = 12)#(0.685, 0.64), fontsize = 14)
-else:
-	plt.figtext(0.78,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
-	plt.figtext(0.78,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
-	plt.figtext(0.78,0.75, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
-
-
-
-
-Savename = 'hc_of_fGW_LLAGN_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
-
-if (plotmult):
-	Savename = "PlotMult_"+Savename
-
-Savename = Savename.replace('.', 'p')
-Savename = Savename.replace('ppng', '.png')
-plt.savefig(Savename)
+	Savename = Savename.replace('.', 'p')
+	Savename = Savename.replace('ppng', '.png')
+	plt.savefig(Savename)
 
 
 else:
