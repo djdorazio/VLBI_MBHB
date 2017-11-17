@@ -19,10 +19,10 @@ import math as ma
 
 ## method optioncs
 fEdd_Dist = True
-plotmult = True
+plotmult = False
 
-Nh = 20
-Ntrial = 10
+Nh = 5
+Ntrial = 1
 
 if (fEdd_Dist):
 	import GWB_IntFuncs_fEddDist as hGWB 
@@ -345,17 +345,17 @@ if (fEdd_Dist==True):
 	hst3 = np.transpose(hs3)
 	hst4 = np.transpose(hs4)
 	for j in range(Ntrial):
-		p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=3, zorder=10)
+		p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=3)
 		plt.scatter(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5)
 	#
 		if (plotmult):
-			p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5, linestyle="--")
+			p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5, linestyle="--", linewidth=3)
 			plt.scatter(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5)
 	#
-			p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5, linestyle=":")
+			p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5, linestyle=":", linewidth=3)
 			plt.scatter(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5)
 	#
-			p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.")
+			p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.", linewidth=3)
 			plt.scatter(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5)
 
 

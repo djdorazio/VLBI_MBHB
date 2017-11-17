@@ -17,14 +17,14 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 101 #25
-Ntrap_L = 101 #25
+Ntrap_z = 161 #25
+Ntrap_L = 161 #25
 
 Ntrp_P = 61.
 Ntrp_q = 31.
 
 
-xminDraw = -6.0 
+xminDraw = -5.0 
 aDraw = -0.3 
 x0Draw = -0.6
 sigDraw = 0.3
@@ -339,10 +339,12 @@ def GWB_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, Pbase, KQ, MdEff, xi, fbi
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	BCUV = 4.2 
-	nu14 = 1.4e9
+	#nu14 = 1.4e9
 	numm = c/(0.1)
-	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	# L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
+	# Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	Lbol = BCUV * 10.**(Lmm)*1.e7 * numm  ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
+
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	return np.minimum(Mmx, Mbn)
 
@@ -388,11 +390,12 @@ def draw_fEdd(xmin, a, x0, sig):
 
 def GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
 	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
-	nu14 = 1.4e9
+	#nu14 = 1.4e9
 	numm = c/(0.1)
-	#L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
-	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 liek in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
+	# #L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
+	# L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 liek in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
+	# Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
+	Lbol = BCUV * 10.**(Lmm)*1.e7 * numm  ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
 
 
 	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
@@ -416,12 +419,13 @@ def GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbas
 	# 	return 0.0
 
 	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
-	nu14 = 1.4e9
+	#nu14 = 1.4e9
 	numm = c/(0.1)
 	#L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
-	L14 = 10.**(Lmm)*1.e7 /( (numm/(nu14))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 liek in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
+	# L14 = 10.**(Lmm)*1.e7 /( (numm/(nu14))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 like in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
+	# Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
 
+	Lbol = BCUV * 10.**(Lmm)*1.e7 * numm  ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
 
 	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
 	#f_Edd = 10.**draw_fEdd(-6.0, 0.7, -0.6, 0.4)

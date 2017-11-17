@@ -22,8 +22,8 @@ from GWB_IntFuncs import *
 ## method optioncs
 fEdd_Dist = False
 
-ztst=0.05
-f_Edd = 10**(-4.6)  
+ztst=0.2
+f_Edd = 10**(-1.0)  
 
 if (fEdd_Dist):
 	Ng = 10

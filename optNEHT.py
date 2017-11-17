@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -136,9 +136,9 @@ p0 = [zeval, eps, KQ]
 #if not fitting:
 pnoFit = [eps, KQ]
 
-thmin_max = 20.0
+thmin_max = 30.0
 Nz = 5
-Ng = int(1.*thmin_max)/4
+Ng = int(1.*thmin_max)
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)

@@ -25,10 +25,10 @@ Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 61 #25
-Ntrap_L = 61 #25
+Ntrap_z = 161 #25
+Ntrap_L = 161 #25
 
-Ntrp_P = 41
+Ntrp_P = 61
 Ntrp_q = 31
 
 Lmx = 31.0#10.*30
@@ -388,11 +388,9 @@ def fbin_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff, 
 
 def Mbn2Lmm(Mbn, f_Edd):
 	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
-	nu14 = 1.4e9
 	numm = c/(0.1)
 	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
-	L14 = 10.**( ( np.log10( Lbol/BCUV ) + 19.0 )/(1.5) )/nu14
-	Lmm = ( ( (3.e11/(1.4e9))**(-0.1) ) * L14 )/1.e7
+	Lmm = Lbol/BCUV/1.e7 ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
 	return Lmm
 
 
@@ -401,10 +399,13 @@ def Mbn2Lmm(Mbn, f_Edd):
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
 	BCUV = 4.2 
-	nu14 = 1.4e9
+	# nu14 = 1.4e9
 	numm = c/(0.1)
-	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	# L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
+	# Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+
+	Lbol = BCUV * 10.**(Lmm)*1.e7 * numm  ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
+
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	#return Mbn
 	return np.maximum(np.minimum(Mmx*1., Mbn), 10.**5)
@@ -412,13 +413,13 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 
 def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
 	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
-	nu14 = 1.4e9
+	# nu14 = 1.4e9
 	numm = c/(0.1)
-	#L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
-	L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 liek in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
-	## 1.5+-0.4 and 19+-24
-	#Lbol = BCUV * 10.**(1.2 * np.log10(nu14 * L14) - 7.3 ) Older one i estiamted by eye from Figure (9) in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
+	# #L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
+	# L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )##CAREUFL WE ARE CONVERTING TO L14 here, not L408 liek in Lum Func #We still want observed lumm because BCs are in terms of observred values!!!! 10** if int log L
+	# Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )  ## FROM TABLE 6 in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
+	# ## 1.5+-0.4 and 19+-24
+	# #Lbol = BCUV * 10.**(1.2 * np.log10(nu14 * L14) - 7.3 ) Older one i estiamted by eye from Figure (9) in from Baldi+2014 https://arxiv.org/pdf/1405.1711v1.pdf
 
 	#nuL14 = numm*Lmm*1.e7/100.
 	#Lbol = BCUV * 10.**(1.2 * np.log10(nuL14) - 7.3 )
@@ -426,6 +427,9 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	# and also using that  chi*L1.4 = Lmm*numm -- x1.e7 gives needed cgs units
 
 	#LEdd_Fac = 4*ma.pi* G * mp*c/sigT - defined globally
+	
+	Lbol = BCUV * 10.**(Lmm)*1.e7 * numm  ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
+
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )# in units of Msun
 
 	#NOTE THAT we could allow f_Edd to be eps above, but the frac LEdd that L is doesnt have to be linked to CBD accretion rat which drives migration
@@ -455,87 +459,6 @@ def FbinofLopt(Lopt, z, chi, thMn, qmin, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin,
 	return fbin_GWgas(z, Mbn*Msun, thMn, qmin, eps, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 
 
-
-
-
-
-##See Yaun, Z Wang J + 2016 Spectral index paper and https://arxiv.org/pdf/1602.04298.pdf
-
-def smLF_Flat(Lmm, z, chi):
-	#Lmm = Lmm/(10.**7) #put in SI for LF
-
-	zsig = 0.32
-	z0 = 0.91 #0.915
-	mm = -0.75
-	zGEQz0 = 0.5*(np.sign(z-z0) + 1.0)
-	zLEQz0 = 0.5*(np.sign(z0-z) + 1.0)
-	# if (z <= z0):
-	# 	ee1 = z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2)
-	# else:
-	# 	ee1 = z**mm
-
-	ee1 = zGEQz0 * z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2) + zLEQz0 * z**mm
-
-	Lstr = 10.**(26.40)#10.**(25.86)
-	Aa = 1.76
-	Bb = 0.53
-	#phi0 = 10.**(-5.308)
-	phi1 = 10.**(-5.58)
-
-	k1 = -0.11#-0.107
-	k2 = 0.79#0.796
-	ee2 = 10.**(k1*z + k2*z*z)
-
-	#Lum1p4 = Lmm/chi
-	Lum408 = 10.**Lmm/chi
-
-	p0 = phi1 / ( (Lum408/ee2/Lstr)**Aa + (Lum408/ee2/Lstr)**Bb ) 
-
-	#return ee1 * p0 / Lum1p4/ee2 #div by L1p4 to put it into dN/dLdV not dN/DlogLdV
-	return ee1 * p0 /np.log(10.) ## in log L becuase we are integrating LogL is this Log or log10!!!! will be extra factor of ln10 !!
-
-def smLF_Steep(Lmm, z, chi):
-	#Lmm = Lmm/(10.**7) #put in SI for LF
-
-	zsig = 0.320
-	z0 = 0.915
-	mm = -0.73
-	zGEQz0 = 0.5*(np.sign(z-z0) + 1.0)
-	zLEQz0 = 0.5*(np.sign(z0-z) + 1.0)
-	# if (z <= z0):
-	# 	ee1 = z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2)
-	# else:
-	# 	ee1 = z**mm
-
-	ee1 = zGEQz0 * z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2) + zLEQz0 * z**mm
-
-	Lstr = 10.**(25.86)
-	Aa = 1.76
-	Bb = 0.53
-	phi1 = 10.**(-5.3)#10.**(-4.44) ##https://arxiv.org/pdf/1602.04298v2.pdf has -5.3 instead of -4.44
-
-	k1 = -0.107
-	k2 = 0.796
-	ee2 = 10.**(k1*z + k2*z*z)
-
-	#Lum1p4 = Lmm/chi
-	Lum408 = 10.**Lmm/chi
-	p0 = phi1 / ( (Lum408/ee2/Lstr)**Aa + (Lum408/ee2/Lstr)**Bb ) 
-
-	## div by Lum becuase above is in in d/dnp.logL
-	#return ee1 * p0 / Lum1p4/ee2
-	return ee1 * p0 /np.log(10.) ## in lnL in Eq 8 of Yuan Wang +2016 so convert to per log10L
-
-def smLF_old(Lmm, z, chi):
-	return smLF_Flat(Lmm, z, chi) + smLF_Steep(Lmm, z, chi)
-	#return smLF_Flat(Lmm, z, chi) ## FLat Spectrum are core dominated rather then jet dominated (https://ned.ipac.caltech.edu/level5/Cambridge/Cambridge1_3_1.html)
-	#return smLF_Steep(Lmm, z, chi)
-
-# vecsmLF_Flat = np.vectorize(smLF_Flat)
-# vecsmLF_Steep = np.vectorize(smLF_Steep)
-# def vecsmLF(Lmm, z, chi):
-# 	return vecsmLF_Flat(Lmm, z, chi) + vecsmLF_Steep(Lmm, z, chi)
-# 	#return vecsmLF_Flat(Lmm, z, chi)  ## FLat Spectrum are core dominated rather then jet dominated (https://ned.ipac.caltech.edu/level5/Cambridge/Cambridge1_3_1.html)
 
 
 
@@ -571,103 +494,6 @@ def smLF(Lmm, z, chi):
 def smLFdz(Lmm, z, chi):
 	dz = 0.0000001#z[0] - z[len(z)]/100.
 	return (smLF(Lmm, z+dz, chi) - smLF(Lmm, z, chi))/dz
-
-
-
-
-
-
-##See Yaun, Z Wang J + 2016 Spectral index paper https://arxiv.org/pdf/1602.04298.pdf
-def OLF_Flat(Lopt, z, chi):
-
-	zsig = 0.32
-	z0 = 0.91 #0.915
-	mm = -0.75
-	if (z <= z0):
-		ee1 = z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2)
-	else:
-		ee1 = z**mm
-
-	Lstr = 10.**(26.41)#10.**(25.86)
-	Aa = 1.76
-	Bb = 0.54
-	#phi0 = 10.**(-5.308)
-	phi1 = 10.**(-5.58)
-
-	k1 = -0.11#-0.107
-	k2 = 0.79#0.796
-	ee2 = 10.**(k1*z + k2*z*z)
-
-	###THIS IS UGLY fix this
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm https://arxiv.org/pdf/1201.5155v1.pdf 
-	BCopt = 10.0 #Richards+2006
-	nu14 = 1.4e9
-	nuVbnd = c/(5.45*10**(-5))
-	#Lopt = BCUV/BCopt * 10.**(1.2 * np.log10(nu14 * L14) - 7.3 )
-	#Lopt * BCopt = LUV*BCUV
-	#Lopt = LUV*BCUV/BCopt
-
-	##Lopt in SI for this Lum
-	#Lum1p4 = 10.**((np.log10(Lopt*nuVbnd*BCopt/BCUV)+7.3)/1.2)/nu14
-	Lum1p4 = 10.**((np.log10(10.**(Lopt) *nuVbnd*BCopt/BCUV)+19.0)/1.5)/nu14
-
-	p0 = phi1 / ( (Lum1p4/ee2/Lstr)**Aa + (Lum1p4/ee2/Lstr)**Bb ) 
-
-	#return ee1 * p0 / Lum1p4/ee2 #div by L1p4 to put it into dN/dL not dN/DlogL
-	return ee1 * p0 
-
-def OLF_Steep(Lopt, z, chi):
-	#Lmm = Lmm/(10.**7) #put in SI for LF
-
-	zsig = 0.320
-	z0 = 0.92
-	mm = -0.73
-	if (z <= z0):
-		ee1 = z**mm * np.exp(-0.5 * ((z - z0)/zsig)**2)
-	else:
-		ee1 = z**mm
-
-	Lstr = 10.**(25.86)
-	Aa = 1.76
-	Bb = 0.53
-	phi1 = 10.**(-5.3)#10.**(-4.44) ##https://arxiv.org/pdf/1602.04298v2.pdf has -5,3 instead of -4.44
-
-	k1 = -0.11
-	k2 = 0.79
-	ee2 = 10.**(k1*z + k2*z*z)
-
-	###THIS IS UGLY fix this
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm https://arxiv.org/pdf/1201.5155v1.pdf 
-	BCopt = 10.0 #Richards+2006
-	nu14 = 1.4e9
-	nuVbnd = c/(5.45*10**(-5)) #Hz
-	#Lopt = BCUV/BCopt * 10.**(1.2 * np.log10(nu14 * L14) - 7.3 )
-	#Lopt * BCopt = LUV*BCUV
-	#Lopt = LUV*BCUV/BCopt
-	#Lum1p4 = 10.**((np.log10(Lopt*nuVbnd*BCopt/BCUV)+7.3)/1.2)/nu14
-	Lum1p4 = 10.**((np.log10(10.**(Lopt) *nuVbnd*BCopt/BCUV)+19.0)/1.5)/nu14
-
-
-	p0 = phi1 / ( (Lum1p4/ee2/Lstr)**Aa + (Lum1p4/ee2/Lstr)**Bb ) 
-
-	## div by Lum becuase above is in in d/dlogL
-	#return ee1 * p0 / Lum1p4/ee2
-	return ee1 * p0 #/ Lum1p4/ee2
-
-def OLF(Lopt, z, chi):
-	return OLF_Flat(Lopt, z, chi) + OLF_Steep(Lopt, z, chi)
-
-
-
-
-# vecOLF_Flat = np.vectorize(OLF_Flat)
-# vecOLF_Steep = np.vectorize(OLF_Steep)
-# def vecOLF(Lopt, z, chi):
-# 	return vecOLF_Flat(Lopt, z, chi) + vecOLF_Steep(Lopt, z, chi)
-
-
-
-
 
 
 
