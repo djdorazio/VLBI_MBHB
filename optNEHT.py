@@ -60,7 +60,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 
 ##IMPORTANT PARAMS HERE
-fbin = 0.1
+fbin = 0.05
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
@@ -71,7 +71,7 @@ KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 10.**(-3.0) 
+f_Edd = 10.**(-4.1) 
 
 # if (Lmx==24.0):
 # 	f_Edd = 0.0001
@@ -100,14 +100,14 @@ OL=0.7
 
 
 ###
-Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
-Mmax = 2.*10.**10*Msun
+Mmx = 1.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 1.*10.**10*Msun
 Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
 
 
-zmax = 5.0
+zmax = 3.0
 
 ##FREE (and KEY) PARAMETERS
 chi  = 0.5 #From power law estimate of Elvis 1994  Radio Loud AGN (3e11/0.408e9)^(0.9-1.0)

@@ -19,15 +19,15 @@ import math as ma
 
 ## method optioncs
 fEdd_Dist = True
-plotmult = False
+plotmult = True
 
-Nh = 5
+Nh = 20
 Ntrial = 1
 
 if (fEdd_Dist):
 	import GWB_IntFuncs_fEddDist as hGWB 
 	from GWB_IntFuncs_fEddDist import *
-	fbin = 0.1 
+	fbin = 0.05 
 else:
 	import GWB_IntFuncs as hGWB 
 	from GWB_IntFuncs import *
@@ -78,7 +78,7 @@ mJy2cgs = 10.**(-26)
 #Accretion Params
 KQ = 10.**(-1.0) ## sets number of pc at which RL turns on
 eps = 1.0 #10**(-3.75)  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 0.001  ## sets L to M connection (accretion rate onto shining BH)
+f_Edd = 10.**(-4.1)  ## sets L to M connection (accretion rate onto shining BH)
 MdEff = 0.1
 
 ## binary pop params
@@ -86,7 +86,7 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 zeval = 0.5  #eval at this z
-zmax = 5.0 ### integrateo out to zmax=5.0
+zmax = 3.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
 Fmin = 0.0 * mJy2cgs ## no lum cut for GWB case
@@ -123,8 +123,8 @@ OL=0.7
 
 
 ###
-Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
-Mmax = 2.*10.**10*Msun
+Mmx = 1.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 1.*10.**10*Msun
 Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 

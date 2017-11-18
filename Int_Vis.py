@@ -20,13 +20,13 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 ztst=0.2
-f_Edd = 10**(-1.0)  
+f_Edd = 10**(-4.1)  
 
 if (fEdd_Dist):
-	Ng = 10
+	Ng = 100
 else:
 	Ng = 100
 sumz = 200
@@ -90,7 +90,7 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 #zeval = 0.5  #eval at this z
-zmax = 5.0 ### integrateo out to zmax=5.0
+zmax = 3.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
 Fmin = 10.0 * mJy2cgs
@@ -183,22 +183,21 @@ def FlxfrmL(Lmm, z, h, Om, OL):
 
 
 def FlxfrmM(Mbn, f_Edd, z, h, Om, OL):
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
-	nu14 = 1.4e9
+	BCXray = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	#nu14 = 1.4e9
 	numm = c/(0.1)
 	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
-	L14 = 10.**( ( np.log10( Lbol/BCUV ) + 19.0 )/(1.5) )/nu14
-	Lmm = ( ( (3.e11/(1.4e9))**(-0.1) ) * L14 )
+	Lmm = Lbol/BCXray/numm
 	return Lmm/4./ma.pi/( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2
 
 
+
+
 def Flx2M(Flx, f_Edd, z, h, Om, OL):
-	BCUV = 4.2 
-	nu14 = 1.4e9
+	BCXray = 50.0#4.2 
 	numm = c/(0.1)
 	Lmm = (Flx * 4.*ma.pi*( (1.+ztst)**2 * Dang(z, h, Om, OL) )**2)
-	L14 =  Lmm/( (3.e11/(1.4e9))**(-0.1) )
-	Lbol = BCUV * 10.**(1.5 * np.log10(nu14 * L14) - 19.0 )
+	Lbol = BXray*Lmm*numm
 	Mbn = Lbol  /(f_Edd * LEdd_Fac * Msun )
 	return Mbn
 	

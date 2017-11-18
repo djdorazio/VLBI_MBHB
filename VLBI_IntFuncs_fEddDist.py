@@ -24,20 +24,20 @@ Delc = np.log(1.e5) ##COul log of rmax/rmin
 Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 
-xminDraw = -5.0 
+xminDraw = -5.5 
 aDraw = -0.3 
 x0Draw = -0.6
 sigDraw = 0.3
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 141 #25
+Ntrap_L = 141 #25
 
 Ntrp_P = 61
 Ntrp_q = 31
 
-Lmx = 31.0#10.*30
+Lmx = 30.0#10.*30
 #Lmx = 25.0 ##LLAGN
 
 #Lmx = np.log(10.**28) #(per nu, per ) ## any higher doesn't change answer much, also >~LEdd for 10^10 Msun
@@ -261,7 +261,7 @@ def L44(fEdd, M, ke, Delc, Lam):
 
 
 def L44_L(Lmm, ke, Delc, Lam):
-	BCUV = 4.2 
+	BCUV = 50.0#4.2 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	#L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
@@ -521,26 +521,26 @@ def fbin_GWgas_L(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, fEdd, Pbase, KQ, MdEff
 
 def Mbn2Lmm(Mbn):
 	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	BCUV = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
 	numm = c/(0.1)
 	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
-	Lmm = Lbol/BCUV/1.e7 ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
+	Lmm = Lbol/BCUV/1.e7/numm ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
 	return Lmm
 
 
 
 def Mbn2Lmm_fxd(Mbn, f_Edd):
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	BCUV = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
 	numm = c/(0.1)
 	Lbol = Mbn*(f_Edd * LEdd_Fac ) #* Msun
-	Lmm = Lbol/BCUV/1.e7 ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
+	Lmm = Lbol/BCUV/1.e7/numm ## for LLAGN, UV nu_UV lum_UV is nearly the same as nu_mm Lmm so use UV correction 
 	return Lmm
 
 
 
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
-	BCUV = 4.2 
+	BCUV = 50.0#4.2 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	#L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
@@ -554,7 +554,7 @@ def Lmm2Mbn(Lmm, Mmx, f_Edd):
 
 def Lmm2Mbn_draw(Lmm):
 	f_Edd = 10.**draw_fEdd(xminDraw, aDraw, x0Draw, sigDraw)
-	BCUV = 4.2 
+	BCUV = 50.0#4.2 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	#L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
@@ -602,7 +602,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	# if (f_exp>=-3.0):
 	# 	return 0.0
 	#else:
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	BCUV = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	

@@ -112,7 +112,7 @@ eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two toge
 # 	f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
 
 fbin = 1.0
-f_Edd = 10.**(-3.5)  
+f_Edd = 10.**(-3.6)  
 MdEff = 0.1
 
 ## binary pop params
@@ -120,7 +120,7 @@ qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 zeval = 0.5  #eval at this z
-zmax = 5.0 ### integrateo out to zmax=5.0
+zmax = 3.0 ### integrateo out to zmax=5.0
 
 
 
@@ -144,14 +144,14 @@ OL=0.7
 
 
 ###
-Mmx = 2.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
-Mmax = 2.*10.**10*Msun
+Mmx = 1.*10.**10 ## This is for LLAGN - choose L, and randomly draw f_edd can give very large inferred masses - so limit by obs knowledge of BH mass
+Mmax = 1.*10.**10*Msun
 Mmin= 0.0*10.**5*Msun ## no really necessary, but in case wan tot limit this
 
 
 
 ###SED scaling
-chi  = 0.5 #Elvis 1994 Radio Loud AGN - nulnu propto nu^(0.9) and #0.1  #chi L_(408MHz) = L_mm (specifc fluxes)
+chi  = 0.5 #Elvis 1994 Radio Loud AGN - nuL_nu propto nu^(0.9) and #0.1  #chi L_(408MHz) = L_mm (specifc fluxes)
 
 
 
@@ -159,7 +159,7 @@ chi  = 0.5 #Elvis 1994 Radio Loud AGN - nulnu propto nu^(0.9) and #0.1  #chi L_(
 DZ = 1.0
 ##FREE (and KEY) PARAMETERS
 ##Overall pop params (keep 1)
-xi = 4.0
+xi = 1.0
 
 
 
@@ -178,7 +178,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 10
+	Ng = 20
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
@@ -188,7 +188,7 @@ if (CntPlt_CumZ):
 	thMns = np.linspace(-1.0, 2.0, Ng) 
 	MdEffs = np.linspace(-2., 0., Ng)
 	Pbasez = np.linspace(0.0, np.log10(2.*Pbase/yr2sec), Ng)
-	Mmxz = np.linspace(5.0, 10.0, Ng)
+	Mmxz = np.linspace(5.0, 10.5, Ng)
 	zs = np.linspace(-2.0, 0.0, Ng)
 	qmins = np.linspace(-3., 0.0, Ng)
 
@@ -653,7 +653,7 @@ if (CntPlt_CumZ):
 
 
 
-		plt.axvline(x=0.0, color='black', linewidth=1, linestyle="--")
+		#plt.axvline(x=0.0, color='black', linewidth=1, linestyle="--")
 
 
 		plt.axvline(x=np.log10(eps), color='chartreuse', linewidth=2, linestyle="--")

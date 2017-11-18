@@ -17,19 +17,19 @@ LEdd_Fac = 4.*ma.pi* G * mp*c/sigT
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 161 #25
-Ntrap_L = 161 #25
+Ntrap_z = 141 #25
+Ntrap_L = 141 #25
 
 Ntrp_P = 61.
 Ntrp_q = 31.
 
 
-xminDraw = -5.0 
+xminDraw = -5.5 
 aDraw = -0.3 
 x0Draw = -0.6
 sigDraw = 0.3
 
-Lmx = 31.0
+Lmx = 30.0
 
 
 ##################
@@ -338,7 +338,7 @@ def GWB_GWgas(z, M, thMn, qmin_EHT, qmin_POP, eps_CBD, Pbase, KQ, MdEff, xi, fbi
 
 
 def Lmm2Mbn(Lmm, Mmx, f_Edd):
-	BCUV = 4.2 
+	BCUV = 50.#4.2 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	# L14 = 10.**(Lmm)*1.e7 /( (3.e11/(1.4e9))**(-0.1) )
@@ -389,7 +389,7 @@ def draw_fEdd(xmin, a, x0, sig):
 
 
 def GWBofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL):
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	BCUV = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	# #L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
@@ -418,7 +418,7 @@ def GWBofLmm_f(Lmm, z, fGW, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbas
 	# if (f_exp>=-3.0):
 	# 	return 0.0
 
-	BCUV = 4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
+	BCUV = 50.0#4.2 ## Lbol = BC lambda L_lambda From 1+2011 at 145 nm Runnoe+2012 Table 2 https://arxiv.org/pdf/1201.5155v1.pdf 
 	#nu14 = 1.4e9
 	numm = c/(0.1)
 	#L14 = (Lmm)*1.e7/chi  #in cgs, chi converts specific Lums, not nuL_nu
