@@ -60,7 +60,7 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 
 ##IMPORTANT PARAMS HERE
-fbin = 0.05
+fbin = 1.0#0.05
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
@@ -419,9 +419,9 @@ plt.tight_layout()
 
 
 if (fEdd_Dist):
-	Savename = "log10NEHTmax_vs_thMn_LLAGNfdist_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+	Savename = "log10NEHTmax_vs_thMn_LLAGNfdist_fbin%g_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(fbin, Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
 else:
-	Savename = "log10NEHTmax_vs_thMn_fdelt_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
+	Savename = "log10NEHTmax_vs_thMn_fdelt_fbin%g_TrapN%g_qminEHT%g_qminPOP%g_Fmin%gmJy_Pbase%gyr_N%g_eps%g_fEdd%g_amax%gpc_Lmx%g.png" %(fbin, Ntrap_z, qmin_EHT, qmin_POP, FminSv, PbaseSv, Ng, eps, f_Edd, KQ, Lmx_cgs)
 
 
 # if (TrapInt):

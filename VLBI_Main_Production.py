@@ -31,7 +31,7 @@ TrapInt = True
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 
 if (fEdd_Dist):
@@ -46,10 +46,10 @@ else:
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
+Mmx_Pbase = False
 fEdd_Npc = True
-Mdot_Npc = True
-qmin_Npc = True
+Mdot_Npc = False
+qmin_Npc = False
 
 qmin_Mdot = False
 qmin_fEdd = False
@@ -85,7 +85,7 @@ mJy2cgs = 10.**(-26)
 ###MEASURED PARAMETERS
 ##Instrument params
 Fmin = 10.0 * mJy2cgs
-thMn = 1.0 * mu_as2rad 
+thMn = 20.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
 
@@ -112,7 +112,7 @@ eps = 1.0#10**(-3.75)  ## sets migration (accretion rate in CBD pushing two toge
 # 	f_Edd = 0.1  ## sets L to M connection (accretion rate onto shining BH)
 
 fbin = 1.0
-f_Edd = 10.**(-3.6)  
+f_Edd = 10.**(-4.12)  
 MdEff = 0.1
 
 ## binary pop params
@@ -314,7 +314,7 @@ if (CntPlt_CumZ):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  np.maximum(1.e-3,-IntzZ_Trap_OptNEHT([eps, 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, 10.**fEdds[i], xi, fbin, h, Om, OL))
-					hGWB_grid[j][i] =  -IntzZ_Trap_GWB_f([eps,  10.**KQs[j]], fPTA, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, 10.**fEdds[i], xi, fbin, h, Om, OL)
+					#hGWB_grid[j][i] =  -IntzZ_Trap_GWB_f([eps,  10.**KQs[j]], fPTA, zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, 10.**fEdds[i], xi, fbin, h, Om, OL)
 
 
 				

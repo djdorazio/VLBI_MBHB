@@ -283,17 +283,18 @@ def fGas_int(qs, eps):
 def tres_intnu(P, qs, M, MdEff, eps, fEdd, tEdd, z):
 	##Check if emission region is larger than binary orbit, if so make tres=0
 	##DO WE WANT REST FRAME ASEP??
+
 	Tres = P*0.0#jsut give it the right shape
 	
-	for i in range(Ntrp_q):
-		for j in range(Ntrp_P):
-			#Dont mult a by sin(th_obs) because we want r_observed<a, not r(jet frame) < a
-			if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
-			#if (nu_SSA(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
-				Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
-	return Tres
+	# for i in range(Ntrp_q):
+	# 	for j in range(Ntrp_P):
+	# 		#Dont mult a by sin(th_obs) because we want r_observed<a, not r(jet frame) < a
+	# 		if (nu_SSA(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm, fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+	# 		#if (nu_SSA(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)<=nummGHz and nu_loss(z, asep(P[i][j],M)/pc2cm*np.sin(thobs), fEdd, M, thobs, gamj, ke, Delc, Lam)>=nummGHz):
+	# 			Tres[i][j] = np.minimum( fGW_int(P[i][j], qs[i][j], M), fGas_int(qs[i][j], eps))/tEdd 
+	# return Tres
 	
-	#return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
+	return np.minimum( fGW_int(P, qs, M), fGas_int(qs, eps))/tEdd 
 
 def tres_int_ALL(P, qs, M, MdEff, eps, tEdd):
 	##dont cut out those with too large an emission region (for denominator of prob)

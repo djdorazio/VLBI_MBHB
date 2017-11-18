@@ -20,10 +20,10 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True #
+fEdd_Dist = False
 
-ztst=0.2
-f_Edd = 10**(-4.1)  
+ztst=0.1
+f_Edd = 0.1#10**(-4.1)  
 
 if (fEdd_Dist):
 	Ng = 100
