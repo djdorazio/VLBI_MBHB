@@ -20,7 +20,7 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = True #
 
 ztst=0.2
 f_Edd = 10**(-4.1)  
