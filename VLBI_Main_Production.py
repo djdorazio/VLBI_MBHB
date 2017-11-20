@@ -32,7 +32,7 @@ TrapInt = True
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 
 if (fEdd_Dist):
