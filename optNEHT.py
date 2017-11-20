@@ -60,13 +60,13 @@ mJy2cgs = 10.**(-26) ###1Jy is 10^(-23) erg/s/cm^2/Hz
 
 
 ##IMPORTANT PARAMS HERE
-fbin = 1.0#0.05
+fbin = 0.05
 Fmin = 10.0 * mJy2cgs
 qmin_EHT = 0.01   ### qminof EHT sample
 
 
 
-Pbase = 10.0*yr2sec
+Pbase = 20.0*yr2sec
 KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
@@ -138,7 +138,7 @@ pnoFit = [eps, KQ]
 
 thmin_max = 30.0
 Nz = 5
-Ng = int(1.*thmin_max)
+Ng = int(1.*thmin_max)/6
 popt = np.zeros([Ng,len(p0)])
 NEHT =np.zeros(Ng)
 NEHT_Z1 =np.zeros(Ng)

@@ -16,10 +16,11 @@ import scipy.integrate as intg
 import math as ma
 # import VLBI_IntFuncs_V2 as IFs 
 # from VLBI_IntFuncs_V2 import *
-import GWB_IntFuncs as hGWB 
-from GWB_IntFuncs import *
+# import GWB_IntFuncs as hGWB 
+# from GWB_IntFuncs import *
 
-
+import GWB_IntFuncs_fEddDist as hGWB 
+from GWB_IntFuncs_fEddDist import *
 
 ###PLOTTING OPTIONS
 CntPlt_CumZ = True
@@ -46,8 +47,8 @@ else:
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = False
-fEdd_Npc = True
+Mmx_Pbase = True
+fEdd_Npc = False
 Mdot_Npc = False
 qmin_Npc = False
 
@@ -85,7 +86,7 @@ mJy2cgs = 10.**(-26)
 ###MEASURED PARAMETERS
 ##Instrument params
 Fmin = 10.0 * mJy2cgs
-thMn = 20.0 * mu_as2rad 
+thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
 
@@ -119,7 +120,7 @@ MdEff = 0.1
 qmin_EHT = 0.01   ### qminof EHT sample
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
-zeval = 0.5  #eval at this z
+zeval = 0.2  #eval at this z
 zmax = 3.0 ### integrateo out to zmax=5.0
 
 
@@ -178,7 +179,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 20
+	Ng = 10
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
@@ -441,18 +442,21 @@ if (CntPlt_CumZ):
 		ttots_mx = np.zeros([Ng,Ng])
 
 		aseps = np.zeros([Ng,Ng])
+		lgstrns = np.zeros([Ng,Ng])
 		RSGmx = np.zeros(Ng)
 		RSGmn = np.zeros(Ng)
 
 		if (TrapInt):
 			if (Lmx==24.0):
-				f_Edd = 10.**(-4)
+				#f_Edd = 10.**(-4)
 				for i in range(0,Ng):
 					for j in range(0,Ng):		
 						Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, KQ], zmax, 10.**Mmxz[i], Fmin, chi, thMn, qmin_EHT, qmin_POP, 10.**Pbasez[j]*yr2sec, f_Edd, xi, fbin, h, Om, OL))
 						aseps[j][i] = asep(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun)/pc2cm
 						ttots_mn[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec
 						ttots_mx[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec
+						lgstrns[j][i] = np.log10(hGWB.hPTA(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun, 0.1, zeval, h, Om, OL))
+
 			else:
 				for i in range(0,Ng):
 					for j in range(0,Ng):		
@@ -460,6 +464,7 @@ if (CntPlt_CumZ):
 						aseps[j][i] = asep(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun)/pc2cm
 						ttots_mn[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(0.01), MdEff, eps)/yr2sec
 						ttots_mx[j][i] = t_tot(aseps[j][i], 10.**Mmxz[i]*Msun, qsofq(1.0), MdEff, eps)/yr2sec
+						lgstrns[j][i] = np.log10(hGWB.hPTA(10.**Pbasez[j]*yr2sec, 10.**Mmxz[i]*Msun, 0.1, zeval, h, Om, OL))
 
 
 
@@ -473,6 +478,10 @@ if (CntPlt_CumZ):
 		PGWq1    = PTrans(10.**Mmxz*Msun, qsofq(1.0), MdEff, eps)/yr2sec
 		Pminz0p1 = PminRes(10.**Mmxz*Msun, thMn, 0.1, h, Om, OL)/yr2sec
 		Pminz1 = PminRes(10.**Mmxz*Msun, thMn, 0.5, h, Om, OL)/yr2sec
+
+		
+
+
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		if (Lmx==24.0):
@@ -495,8 +504,11 @@ if (CntPlt_CumZ):
 		# plt.clabel(alms, fmt = r'$10^{%g}$', colors = 'blue', fontsize=14)
 
 		alms= plt.contour(Mmxz, Pbasez, aseps, colors="white", levels = [0.001, 0.003, 0.01, 0.03, 0.1])
-		plt.clabel(alms, fmt = r'$%g$ pc', colors="white", fontsize=14)
+		plt.clabel(alms, fmt = r'$a=%g$ pc', colors="white", fontsize=14)
 
+
+		alms= plt.contour(Mmxz, Pbasez, lgstrns, colors="cyan", levels = [-26., -24., -22., -20., -18., -16., -15., -14., -13., -12., -11.])
+		plt.clabel(alms, fmt = r'$h=10^{%g}$', colors="cyan", fontsize=14)
 
 		#plt.plot(Mmxz, np.log10(PGWq0p01), color="yellow", linestyle=":")
 		#plt.plot(Mmxz, np.log10(PGWq1), color="yellow", linestyle="--")
@@ -542,7 +554,7 @@ if (CntPlt_CumZ):
 			plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.32, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.27, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
-			plt.figtext(0.15,0.22, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='yellow', fontsize=15)
+			plt.figtext(0.15,0.22, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=15)
 			plt.figtext(0.15,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 
 

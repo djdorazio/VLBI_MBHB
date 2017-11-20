@@ -31,10 +31,10 @@ sigDraw = 0.3
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 141 #25
-Ntrap_L = 141 #25
+Ntrap_z = 41 #25
+Ntrap_L = 41 #25
 
-Ntrp_P = 61
+Ntrp_P = 41
 Ntrp_q = 31
 
 Lmx = 30.0#10.*30

@@ -21,7 +21,7 @@ import math as ma
 fEdd_Dist = True
 plotmult = True
 
-Nh = 20
+Nh = 10
 Ntrial = 1
 
 if (fEdd_Dist):
@@ -305,7 +305,7 @@ if (plotmult):
 			
 			hs2[i][j] = -IntzZ_Trap_GWB_f([eps,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 			hs3[i][j] = -IntzZ_Trap_GWB_f([eps/100.0,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
-			hs4[i][j] = -IntzZ_Trap_GWB_f([eps*100.0,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
+			hs4[i][j] = -IntzZ_Trap_GWB_f([eps*10000.0,  10000.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 			print "%g/%g" %(Ntrial*i+j+1, Nh*Ntrial)
 
 
@@ -383,7 +383,7 @@ if (fEdd_Dist==True):
 	if (plotmult):
 		plt.figtext(0.15, 0.25, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
 		plt.figtext(0.15,0.19, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
-		plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"Fid., $a_{\rm{max}} = %g$pc, $\dot{\mathcal{M}}=%g$" %(KQ,eps), r"$10a_{\rm{max}}$", r"$10a_{\rm{max}}$, $0.01\dot{\mathcal{M}}$", r"$10a_{\rm{max}}$, $100\dot{\mathcal{M}}$"), (0.615, 0.725), fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"$a_{\rm{max}}(Fid.) = %g$pc, $\dot{\mathcal{M}}(Fid.)=%g$" %(KQ,eps), r"$10a_{\rm{max}}(Fid.)$", r"$10a_{\rm{max}}(Fid.)$, $0.01\dot{\mathcal{M}}(Fid.)$", r"$10^4a_{\rm{max}}(Fid.)$, $10^4\dot{\mathcal{M}}(Fid.)$"), (0.615, 0.725), fontsize = 12)#(0.685, 0.64), fontsize = 14)
 	else:
 		plt.figtext(0.78,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
 		plt.figtext(0.78,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
