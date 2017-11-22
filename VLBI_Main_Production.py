@@ -32,7 +32,7 @@ TrapInt = True
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 
 if (fEdd_Dist):
@@ -47,8 +47,8 @@ else:
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
-fEdd_Npc = False
+Mmx_Pbase = False
+fEdd_Npc = True
 Mdot_Npc = False
 qmin_Npc = False
 
@@ -179,7 +179,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 10
+	Ng = 20
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
