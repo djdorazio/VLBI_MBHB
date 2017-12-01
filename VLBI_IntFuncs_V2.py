@@ -25,10 +25,10 @@ Lam = np.log(1.e5) ##COul log of gam_e max/gam_e min
 
 #### INTEGRATION ERROR TOLS
 ###TRAP int
-Ntrap_z = 61 #25
-Ntrap_L = 61 #25
+Ntrap_z = 141 #25
+Ntrap_L = 141 #25
 
-Ntrp_P = 41
+Ntrp_P = 61
 Ntrp_q = 31
 
 Lmx = 30.0#10.*30

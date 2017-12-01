@@ -8,7 +8,7 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Helvetica']
-matplotlib.rcParams.update({'font.size': 16})
+matplotlib.rcParams.update({'font.size': 18})
 import matplotlib.pyplot as plt
 
 

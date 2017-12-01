@@ -8,7 +8,7 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Helvetica']
-matplotlib.rcParams.update({'font.size': 20})
+matplotlib.rcParams.update({'font.size': 18})
 import matplotlib.pyplot as plt
 
 
@@ -32,7 +32,7 @@ TrapInt = True
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
 
 
 if (fEdd_Dist):
@@ -47,10 +47,10 @@ else:
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = False
-fEdd_Npc = True
-Mdot_Npc = False
-qmin_Npc = False
+Mmx_Pbase = True
+fEdd_Npc = False
+Mdot_Npc = True
+qmin_Npc = True
 
 qmin_Mdot = False
 qmin_fEdd = False
@@ -85,8 +85,8 @@ mJy2cgs = 10.**(-26)
 ## ALL THE PARAMETERS!
 ###MEASURED PARAMETERS
 ##Instrument params
-Fmin = 10.0 * mJy2cgs
-thMn = 1.0 * mu_as2rad 
+Fmin = 1.0 * mJy2cgs
+thMn = 20.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
 
@@ -179,7 +179,7 @@ hPTA = 3.*10.**(-15)  # best case at above freq from PPTA
 
 
 if (CntPlt_CumZ):
-	Ng = 20
+	Ng = 10
 	#DZ = 0.2
 	#zeval = 0.37  ##Max z count
 
@@ -260,7 +260,11 @@ if (CntPlt_CumZ):
 		#plt.figtext(0.15,0.86, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 		plt.figtext(0.18,0.87, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 		plt.figtext(0.18,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-		plt.figtext(0.18,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+		if (FminSv*1000.0 <= 100):
+			FminSv = FminSv*1000.0
+			plt.figtext(0.18,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+		else:
+			plt.figtext(0.18,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 		plt.figtext(0.18,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 		plt.figtext(0.18,0.67, r"$a_{\rm{max}}=%g$ pc" %KQ, color='yellow', fontsize=15)
 		plt.figtext(0.18,0.62, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -320,10 +324,10 @@ if (CntPlt_CumZ):
 
 				
 				
-				RSGmx[i] = RSGff(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
-				RSGmn[i] = RSGes(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
+				RSGmx[i] = RSGff(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
+				RSGmn[i] = RSGes(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
 				#aTmx[i] = aTrans(10.**10*Msun, 1.0, MdEff, 10.**epss[i])/pc2cm
-				aTmn[i] = aTrans(10.**8*Msun, qsofq(qmin_EHT), MdEff, 10.**epss[i])/pc2cm
+				aTmn[i] = aTrans(10.**9*Msun, qsofq(qmin_EHT), MdEff, 10.**epss[i])/pc2cm
 
 		else:
 			for i in range(0,Ng):
@@ -344,10 +348,12 @@ if (CntPlt_CumZ):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		ax = fig.add_subplot(111)
-		if (Lmx==24.0):
-			plt.title(r'LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
-		else:
-			plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		# if (Lmx==24.0):
+		# 	#plt.title(r'LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		# 	plt.title(r'LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$' fontsize=15)
+		# else:
+		# 	#plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
 
 		ax.contourf(fEdds, Log_thmxs, np.log10(Ntot_grid), 200, cmap = "viridis")
 		ax2 = ax.twinx()
@@ -398,7 +404,11 @@ if (CntPlt_CumZ):
 		#plt.figtext(0.15,0.86, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 		plt.figtext(0.15,0.87, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 		plt.figtext(0.15,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-		plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+		if (FminSv*1000.0 <= 100):
+			FminSv = FminSv*1000.0
+			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+		else:
+			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 		plt.figtext(0.15,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 		plt.figtext(0.15,0.67, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 		plt.figtext(0.15,0.62, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -484,11 +494,12 @@ if (CntPlt_CumZ):
 
 
 		fig = plt.figure(figsize=[7.5,6.1])
-		if (Lmx==24.0):
-			plt.title(r"LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
-		else:
-			plt.title(r"$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
+		# if (Lmx==24.0):
+		# 	plt.title(r"LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
+		# else:
+		# 	plt.title(r"$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
 
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
 
 		cnt = plt.contourf(Mmxz, Pbasez, np.log10(Ntot_grid), 200, cmap = "viridis")
 		#cnt = plt.contourf(epss, KQs, np.log10(Ftot_grid), 200, cmap = "viridis")
@@ -541,7 +552,11 @@ if (CntPlt_CumZ):
 			#plt.figtext(0.15,0.52, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.47, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.42, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.32, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.27, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
 			plt.figtext(0.15,0.22, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -551,7 +566,11 @@ if (CntPlt_CumZ):
 			#plt.figtext(0.15,0.52, r"$L^{\rm{max}}_{mm}=10^{%g}$ erg s$^{-1}$" %Lmx_cgs, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.47, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.42, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.15,0.37, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.32, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.27, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
 			plt.figtext(0.15,0.22, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=15)
@@ -609,11 +628,11 @@ if (CntPlt_CumZ):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([10.**epss[i], 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, f_Edd, xi, fbin, h, Om, OL))
-					ttots_mn[j][i] = t_tot(10.**KQs[j]*pc2cm, 10.**8.0*Msun, qsofq(0.1), MdEff, 10.**epss[i])/yr2sec
+					ttots_mn[j][i] = t_tot(10.**KQs[j]*pc2cm, 10.**9.0*Msun, qsofq(0.1), MdEff, 10.**epss[i])/yr2sec
 					#ttots_mx[j][i] = t_tot(10.**KQs[j]*pc2cm, 10.**9*Msun, qsofq(0.1), MdEff, 10.**epss[i])/yr2sec
 
-				RSGmx[i] = RSGff(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
-				RSGmn[i] = RSGes(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
+				RSGmx[i] = RSGff(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
+				RSGmn[i] = RSGes(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
 				#RSGmx[i] = RSG(10.**epss[i], Mmax, MdEff)/pc2cm
 				#RSGmn[i] = RSG(10.**epss[i], Mmin, MdEff)/pc2cm
 				#aTmx[i] = aTrans(10.**10*Msun, 1.0, MdEff, 10.**epss[i])/pc2cm
@@ -623,7 +642,7 @@ if (CntPlt_CumZ):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_OptNEHT([10.**epss[i], 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, qmin, Pbase, f_Edd, xi, fbin, h, Om, OL))
-					ttots[j][i] = t_tot(10.**KQs[j]*pc2cm, 10.**8*Msun, 1.0, MdEff, 10.**epss[i])/yr2sec
+					ttots[j][i] = t_tot(10.**KQs[j]*pc2cm, 10.**9*Msun, 1.0, MdEff, 10.**epss[i])/yr2sec
 
 				RSGmx[i] = RSG(10.**epss[i], Mmax, MdEff)/pc2cm
 				RSGmn[i] = RSG(10.**epss[i], Mmin, MdEff)/pc2cm
@@ -638,7 +657,10 @@ if (CntPlt_CumZ):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		ax = fig.add_subplot(111)
-		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+
+		#plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
+
 		ax.contourf(epss, Log_thmxs, np.log10(Ntot_grid), 200, cmap = "viridis")
 		ax2 = ax.twinx()
 		ax2.contourf(epss, KQs, np.log10(Ntot_grid), 200, cmap = "viridis")
@@ -658,7 +680,7 @@ if (CntPlt_CumZ):
 		#plt.plot(epss, np.log10(aTmx), color='green', linewidth=2, linestyle=":" )
 		#plt.plot(epss, np.log10(aTmn), color='yellow', linewidth=2, linestyle="--" )
 
-		lmsmn = plt.contour(epss, KQs, np.log10(ttots_mn), colors="white", levels = [6.0, 7.0, 8.0])
+		lmsmn = plt.contour(epss, KQs, np.log10(ttots_mn), colors="white", levels = [4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
 		#lmsmx = plt.contour(epss, KQs, np.log10(ttots_mx), colors="cyan", levels = [7.0, 8.0])
 		plt.clabel(lmsmn, fmt = r'$10^{%g}$', colors="white", fontsize=12, linestyle='--')	
 		#plt.clabel(lmsmx, fmt = r'$10^{%g}$', colors="cyan", fontsize=12, linestyle=':')	
@@ -694,13 +716,21 @@ if (CntPlt_CumZ):
 		if (fEdd_Dist):
 			plt.figtext(0.15,0.87, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.67, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 		else:
 			plt.figtext(0.15,0.87, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.67, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.62, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -741,18 +771,18 @@ if (qmin_Npc):
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_Trap_OptNEHT([eps, 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, 10.**qmins[i], np.minimum(qmin_POP, 10.**qmins[i]), Pbase, f_Edd, xi, fbin, h, Om, OL))
-					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**8.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
+					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**9.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
 
 
-				RSGmx[i] = RSGff(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
-				RSGmn[i] = RSGes(10.**epss[i], 1.e8*Msun, MdEff)/pc2cm
+				RSGmx[i] = RSGff(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
+				RSGmn[i] = RSGes(10.**epss[i], 1.e9*Msun, MdEff)/pc2cm
 				
 				
 		else:
 			for i in range(0,Ng):
 				for j in range(0,Ng):
 					Ntot_grid[j][i] =  max(1.e-3,-IntzZ_OptNEHT([10.**epss[i], 10.**KQs[j]], zmax, Mmx, Fmin, chi, thMn, 10.**qmins[i], np.minimum(qmin_POP, 10.**qmins[i]), Pbase, f_Edd, xi, fbin, h, Om, OL))
-					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**8.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
+					ttots_mn[j][i] =   t_tot(10.**KQs[j]*pc2cm, 10.**9.0*Msun, 10.**qmins[i], MdEff, eps)/yr2sec
 
 				#RSGmx[i] = RSG(10.**epss[i], Mmax, MdEff)/pc2cm
 				#RSGmn[i] = RSG(10.**epss[i], Mmin, MdEff)/pc2cm
@@ -764,7 +794,9 @@ if (qmin_Npc):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		ax = fig.add_subplot(111)
-		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		#plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
+
 		ax.contourf(qmins, Log_thmxs, np.log10(Ntot_grid), 200, cmap = "viridis")
 		ax2 = ax.twinx()
 		ax2.contourf(qmins, KQs, np.log10(Ntot_grid), 200, cmap = "viridis")
@@ -796,7 +828,7 @@ if (qmin_Npc):
 		plt.axhline(y=np.log10(KQ), color='chartreuse', linewidth=2, linestyle="--")
 		plt.scatter(np.log10(qmin_EHT), np.log10(KQ), color='chartreuse', marker='o', s=30)
 
-		lmsmn = plt.contour(qmins, KQs, np.log10(ttots_mn), colors="white", levels = [6.0, 7.0, 8.0])
+		lmsmn = plt.contour(qmins, KQs, np.log10(ttots_mn), colors="white", levels = [4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
 		plt.clabel(lmsmn, fmt = r'$10^{%g}$', colors="white", fontsize=12, linestyle='--')	
 
 
@@ -823,7 +855,11 @@ if (qmin_Npc):
 			
 			plt.figtext(0.2,0.87, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.67, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 		else:
@@ -831,7 +867,11 @@ if (qmin_Npc):
 
 			plt.figtext(0.15,0.87, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.15,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.67, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='yellow', fontsize=15)
 			plt.figtext(0.15,0.62, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -893,7 +933,9 @@ if (qmin_Mdot):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		ax = fig.add_subplot(111)
-		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		#plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
+
 		ax.contourf(qmins, epss, np.log10(Ntot_grid), 200, cmap = "viridis")
 
 		lms = plt.contour(qmins, epss, np.log10(Ntot_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
@@ -928,13 +970,21 @@ if (qmin_Mdot):
 		if (fEdd_Dist):
 			plt.figtext(0.2,0.87, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ),  color='yellow', fontsize=15)
 			plt.figtext(0.2,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.67, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 		else:
 			plt.figtext(0.2,0.87, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ),  color='yellow', fontsize=15)
 			plt.figtext(0.2,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+			if (FminSv*1000.0 <= 100):
+				FminSv = FminSv*1000.0
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+			else:
+				plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.67, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='yellow', fontsize=15)
 			plt.figtext(0.2,0.62, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
@@ -995,7 +1045,8 @@ if (qmin_fEdd):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		ax = fig.add_subplot(111)
-		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		#plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$' %zmax, fontsize=15)
+		plt.title(r'$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$', fontsize=16)
 		ax.contourf(qmins, fEdds, np.log10(Ntot_grid), 200, cmap = "viridis")
 
 		lms = plt.contour(qmins, fEdds, np.log10(Ntot_grid), cmap = "viridis", levels = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
@@ -1028,7 +1079,11 @@ if (qmin_fEdd):
 
 		plt.figtext(0.2,0.87, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
 		plt.figtext(0.2,0.82, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-		plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+		if (FminSv*1000.0 <= 100):
+			FminSv = FminSv*1000.0
+			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+		else:
+			plt.figtext(0.2,0.77, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
 		plt.figtext(0.2,0.72, r"$P_{\rm{base}}=%g$ yr" %PbaseSv, color='yellow', fontsize=15)
 		#plt.figtext(0.2,0.67, r"$f_{\rm{Edd}}=%g$" %f_Edd, color='yellow', fontsize=15)
 		plt.figtext(0.2,0.67, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ),  color='yellow', fontsize=15)
