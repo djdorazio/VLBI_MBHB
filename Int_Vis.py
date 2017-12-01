@@ -23,7 +23,7 @@ from GWB_IntFuncs import *
 fEdd_Dist = False
 
 ztst=0.1
-f_Edd = 0.1#10**(-4.1)  
+f_Edd = 10**(-4.1)  
 
 if (fEdd_Dist):
 	Ng = 100
@@ -93,7 +93,7 @@ qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS
 zmax = 3.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
-Fmin = 10.0 * mJy2cgs
+Fmin = 1.0 * mJy2cgs
 thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
@@ -211,8 +211,8 @@ Mbnz = np.linspace(5.0, 11.5, Ng)
 
 Mavgs = np.zeros(Ng)
 MavgsHi = np.zeros(NgHi)
-Lmms = np.linspace(22.0, 26.0, Ng)
-LmmsHi = np.linspace(22.0, 26.0, NgHi)
+Lmms = np.linspace(2.0, 27.0, Ng)
+LmmsHi = np.linspace(21.0, 27.0, NgHi)
 FlxsL = FlxfrmL(10.**Lmms, ztst, h, Om, OL)/mJy2cgs
 FlxsLHi = FlxfrmL(10.**LmmsHi, ztst, h, Om, OL)/mJy2cgs
 FlxsM = FlxfrmM(10.**Mbnz*Msun, f_Edd, ztst, h, Om, OL)/mJy2cgs
@@ -433,17 +433,21 @@ PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
 if (fEdd_Dist):
-	plt.figtext(0.17,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=14)
+	plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
 else:
-	plt.figtext(0.17,0.52, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=14)
-	plt.figtext(0.17,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=14)
+	plt.figtext(0.19,0.52, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=15)
+	plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
 
-plt.figtext(0.17,0.42, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=14)
-plt.figtext(0.17,0.37, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=14)
-plt.figtext(0.17,0.32, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=14)
-plt.figtext(0.17,0.27, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=14)
-plt.figtext(0.17,0.22, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=14)
-plt.figtext(0.17,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=14)
+plt.figtext(0.19,0.42, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
+plt.figtext(0.19,0.37, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
+if (FminSv*1000.0 <= 100):
+	FminSv = FminSv*1000.0
+	plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+else:
+	plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+plt.figtext(0.19,0.27, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
+plt.figtext(0.19,0.22, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
+plt.figtext(0.19,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 
 
 if (fEdd_Dist):
