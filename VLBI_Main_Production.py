@@ -8,7 +8,7 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Helvetica']
-matplotlib.rcParams.update({'font.size': 16})
+matplotlib.rcParams.update({'font.size': 20})
 import matplotlib.pyplot as plt
 
 
@@ -485,9 +485,9 @@ if (CntPlt_CumZ):
 
 		fig = plt.figure(figsize=[7.5,6.1])
 		if (Lmx==24.0):
-			plt.title(r"LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=18)
+			plt.title(r"LLAGN, $\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
 		else:
-			plt.title(r"$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=18)
+			plt.title(r"$\log_{10}{\left[ N_{\rm{VLBI}} \right]}$, $z_{\rm{max}}=%g$" %(zmax), fontsize=20)
 
 
 		cnt = plt.contourf(Mmxz, Pbasez, np.log10(Ntot_grid), 200, cmap = "viridis")

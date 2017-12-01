@@ -94,7 +94,7 @@ zmax = 3.0 ### integrateo out to zmax=5.0
 
 ##Instrument params
 Fmin = 10.0 * mJy2cgs
-thMn = 10.0 * mu_as2rad 
+thMn = 1.0 * mu_as2rad 
 Pbase = 10.0*yr2sec
 
 
