@@ -2,7 +2,7 @@ import numpy as np
 
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
@@ -23,7 +23,7 @@ from GWB_IntFuncs import *
 fEdd_Dist = True
 textlabels = True
 
-ztst=0.2
+ztst=0.1
 f_Edd = 0.1#10**(-4.1)  
 
 if (fEdd_Dist):
@@ -245,8 +245,8 @@ nubnds_avgHi = np.zeros([NgHi,NgHi])
 if (fEdd_Dist):
 	for k in range(sumz):
 		for i in range(0,Ng):
+			Mbndraw = Lmm2Mbn_draw(Lmms[i])
 			for j in range(0,Ng):
-				Mbndraw = Lmm2Mbn_draw(Lmms[i])
 				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, 0.001)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				Int_grid[j][i]   = Int_grid[j][i]   + Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				nubnds_avg[j][i] = nubnds_avg[j][i] + nubnd_L(10**Pbasez[j]*yr2sec, Mbndraw*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
