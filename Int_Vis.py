@@ -20,10 +20,11 @@ from GWB_IntFuncs import *
 
 
 ## method optioncs
-fEdd_Dist = False
+fEdd_Dist = True
+textlabels = True
 
-ztst=0.1
-f_Edd = 10**(-4.1)  
+ztst=0.2
+f_Edd = 0.1#10**(-4.1)  
 
 if (fEdd_Dist):
 	Ng = 100
@@ -211,8 +212,8 @@ Mbnz = np.linspace(5.0, 11.5, Ng)
 
 Mavgs = np.zeros(Ng)
 MavgsHi = np.zeros(NgHi)
-Lmms = np.linspace(2.0, 27.0, Ng)
-LmmsHi = np.linspace(21.0, 27.0, NgHi)
+Lmms = np.linspace(22.0, 26.0, Ng)
+LmmsHi = np.linspace(22.0, 26.0, NgHi)
 FlxsL = FlxfrmL(10.**Lmms, ztst, h, Om, OL)/mJy2cgs
 FlxsLHi = FlxfrmL(10.**LmmsHi, ztst, h, Om, OL)/mJy2cgs
 FlxsM = FlxfrmM(10.**Mbnz*Msun, f_Edd, ztst, h, Om, OL)/mJy2cgs
@@ -245,11 +246,12 @@ if (fEdd_Dist):
 	for k in range(sumz):
 		for i in range(0,Ng):
 			for j in range(0,Ng):
+				Mbndraw = Lmm2Mbn_draw(Lmms[i])
 				#Int_grid[j][i] =  Int_grid[j][i] +  Fbin_Integrand_GWgas(np.log10(Mbn2Lmm_fxd(10**Mbnz[i]*Msun, 0.001)), ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
 				Int_grid[j][i]   = Int_grid[j][i]   + Fbin_Integrand_GWgas(Lmms[i], ztst, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, 10**Pbasez[j]*yr2sec, KQ, MdEff, xi, fbin, h, Om, OL)
-				nubnds_avg[j][i] = nubnds_avg[j][i] + nubnd_L(10**Pbasez[j]*yr2sec, Lmm2Mbn_draw(Lmms[i])*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
+				nubnds_avg[j][i] = nubnds_avg[j][i] + nubnd_L(10**Pbasez[j]*yr2sec, Mbndraw*Msun, ztst, Lmms[i], thobs, gamj, ke, Delc, Lam)
 				#Flxmns[j][i]   =  Flxmns[j][i] + Flxnu(ztst, 10**Mbnz[i]*Msun, f_Edd, h, Om, OL, Fmin,fEdd_Dist)
-			Mavgs[i] = Mavgs[i] + Lmm2Mbn_draw(Lmms[i]) * np.exp(-(Lmm2Mbn_draw(Lmms[i])/Mmx)**20)
+			Mavgs[i] = Mavgs[i] + Mbndraw * np.exp(-(Lmm2Mbn_draw(Lmms[i])/Mmx)**4)
 		print "step %g/%g" %(k+1, sumz)
 	Int_grid = Int_grid/sumz
 	#Flxmns = Flxmns/sumz
@@ -272,8 +274,8 @@ if (fEdd_Dist):
 	for i in range(0, Ng):
 		for j in range(0,Ng):
 			FlxmnsLo[j][i]  = FlxnuL(ztst, Lmms[i], f_Edd, h, Om, OL, Fmin,fEdd_Dist)
-			abndsLo[j][i]    = asep_bnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, thMn, h, Om, OL, Pbase, KQ)
-			nubndsLo[j][i]   = nubnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
+			abndsLo[j][i]   = asep_bnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, thMn, h, Om, OL, Pbase, KQ)
+			nubndsLo[j][i]  = nubnd(10**Pbasez[j]*yr2sec, 10**Mbnz[i]*Msun, ztst, f_Edd, thobs, gamj, ke, Delc, Lam)
 
 	# for k in range(sumz):
 	# 	for i in range(0, NgHi):
@@ -321,13 +323,8 @@ ax = fig.add_subplot(111)
 if (fEdd_Dist):
 	ax.contourf(np.log10(FlxsL), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
 	ax2 = ax.twiny()
-	# new_tick_locations = ax.get_xticks()
-	# def tick_function(Ms):
-	# 	len(Ms)/len(new_tick_locations)
-	# 	return ["%.1f" % z for z in Ms]
-	# ax2.set_xlim(ax.get_xlim())
-	# ax2.set_xticks(new_tick_locations)
-	# ax2.set_xticklabels(tick_function(Mavgs))
+
+	
 	ax2.contourf(Mavgs, Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=0)
 #
 	#cbar = plt.colorbar(cnt)
@@ -340,16 +337,6 @@ else:
 	ax.contourf(np.log10(FlxsM), Pbasez, np.log10(Int_grid), 200, cmap = "viridis", zorder=5)
 	ax2=ax.twiny()
 #
-	# new_tick_locations = ax.get_xticks()
-	# def tick_function(X1s, f_Edd, z, h, Om, OL):
-	# 	tik_locs = ax.get_xticks()
-	# 	len(X1s)/len(tiklocs)
-	# 	X2s = np.log10( Flx2M(10.**X1s*mJy2cgs, f_Edd, z, h, Om, OL) )
-	# 	return ["%.1f" % k for k in X2s]
-#
-	# ax2.set_xlim(ax.get_xlim())
-	# ax2.set_xticks(new_tick_locations)
-	# ax2.set_xticklabels(tick_function(np.log10(FlxsM), f_Edd, ztst, h, Om, OL))
 #
 	ax2.contourf(Mbnz, Pbasez, np.log10(Int_grid), 200, zorder=-10)
 	#cbar = plt.colorbar(cnt)
@@ -385,7 +372,7 @@ if (fEdd_Dist):
 	# ##asep bounds
 	# ax.contourf(np.log10(FlxsLHi), PbasezHi, np.log10(abnds), colors="red", alpha=0.3, zorder=10)
 	# ax.contour(np.log10(FlxsLHi), PbasezHi, abnds, colors="red", linewidths=[3], linestyle="--", levels = [0.5], zorder=10)
-#
+
 	ax2.contourf(Mavgs, Pbasez, np.log10(FlxmnsLo-0.5), colors="black", alpha=0.3, zorder=10)
 	ax2.contour(Mavgs, Pbasez, FlxmnsLo, colors="black", linewidths=[3], levels = [0.5], zorder=10)
 #
@@ -432,22 +419,23 @@ thMnSv = thMn/mu_as2rad
 PbaseSv = Pbase/yr2sec
 Lmx_cgs = Lmx + 7.0
 
-if (fEdd_Dist):
-	plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
-else:
-	plt.figtext(0.19,0.52, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=15)
-	plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
+if (textlabels):
+	if (fEdd_Dist):
+		plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
+	else:
+		plt.figtext(0.19,0.52, r"$f_{\rm{Edd}}=10^{%g}$" %np.log10(f_Edd), color='yellow', fontsize=15)
+		plt.figtext(0.19,0.47, r"$z=%g$" %ztst, color='yellow', fontsize=15)
 
-plt.figtext(0.19,0.42, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
-plt.figtext(0.19,0.37, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
-if (FminSv*1000.0 <= 100):
-	FminSv = FminSv*1000.0
-	plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
-else:
-	plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
-plt.figtext(0.19,0.27, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
-plt.figtext(0.19,0.22, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
-plt.figtext(0.19,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
+	plt.figtext(0.19,0.42, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='yellow', fontsize=15)
+	plt.figtext(0.19,0.37, r"$\theta_{\rm{min}}=%g \mu$as" %thMnSv, color='yellow', fontsize=15)
+	if (FminSv*1000.0 <= 100):
+		FminSv = FminSv*1000.0
+		plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ mJy" %FminSv, color='yellow', fontsize=15)
+	else:
+		plt.figtext(0.19,0.32, r"$F_{\rm{min}}=%g$ Jy" %FminSv, color='yellow', fontsize=15)
+	plt.figtext(0.19,0.27, r"$\dot{\mathcal{M}}=%g$" %eps, color='yellow', fontsize=15)
+	plt.figtext(0.19,0.22, r"$a_{\rm{max}}=10^{%g}$ pc" %np.log10(KQ), color='yellow', fontsize=15)
+	plt.figtext(0.19,0.17, r"$f_{\rm{bin}}=%g$" %fbin, color='yellow', fontsize=15)
 
 
 if (fEdd_Dist):

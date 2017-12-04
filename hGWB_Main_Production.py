@@ -21,7 +21,7 @@ import math as ma
 fEdd_Dist = True
 plotmult = True
 
-Nh = 10
+Nh = 20
 Ntrial = 1
 
 if (fEdd_Dist):
@@ -156,7 +156,7 @@ Ng = 10
 #DZ = 0.2
 #zeval = 0.37  ##Max z count
 
-fEdds = np.linspace(-3.0, 2.0, Ng)
+fEdds = np.linspace(-5.5, 0.0, Ng)
 epss = np.linspace(-3.0, 1.0, Ng)
 KQs = np.linspace(-2.5, 0.0, Ng)
 thMns = np.linspace(-1.0, 2.0, Ng) 
@@ -177,6 +177,28 @@ Mtst = 1.e8*Msun
 Ms = np.linspace(5.0, 10.0, 100)
 Ptst = 1.*yr2sec
 Ps = np.linspace(-2.0, 10.0, 100.)
+
+
+
+###PLOT fedd dist
+xx = np.linspace(-5.5, 0.0, 200)
+pds = pdf_fEdd(xx, xminDraw, aDraw, x0Draw, sigDraw)
+
+#plt.figure(figsize=[7,6])
+plt.figure()
+plt.plot(xx, np.log10(pds), color="black", linewidth=3)
+# plt.xlabel(r"$\logf_{\rm{Edd}}$")
+# plt.ylabel(r"$P(\logf_{\rm{Edd}})$")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$P(x)$")
+#plt.axes().set_aspect('equal', 'datalim')
+plt.tight_layout()
+Savename = "fEdd_Dist_xmin%g_x0%g_a%g_Gsig%G.png" %(xminDraw, x0Draw, aDraw, sigDraw)
+Savename = Savename.replace('.', 'p')
+Savename = Savename.replace('ppng', '.png')
+plt.savefig(Savename)
+
+
 plt.figure(figsize=[8,6])
 plt.subplot(211)
 p1=plt.plot(Ps, np.log10(tres_int(10.**Ps*yr2sec, qstst, Mtst*0.01, MdEff, epsa, tEdd, xi)/tEdd))
@@ -305,7 +327,7 @@ if (plotmult):
 			
 			hs2[i][j] = -IntzZ_Trap_GWB_f([eps,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 			hs3[i][j] = -IntzZ_Trap_GWB_f([eps/100.0,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
-			hs4[i][j] = -IntzZ_Trap_GWB_f([eps*10000.0,  10000.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
+			hs4[i][j] = -IntzZ_Trap_GWB_f([eps*100.0,  10.*KQ], 10**fPTAs[i], zmax, Mmx, Fmin, chi, thMn, qmin_EHT, qmin_POP, Pbase, MdEff, f_Edd, xi, fbin, h, Om, OL)
 			print "%g/%g" %(Ntrial*i+j+1, Nh*Ntrial)
 
 
@@ -345,21 +367,22 @@ if (fEdd_Dist==True):
 	hst3 = np.transpose(hs3)
 	hst4 = np.transpose(hs4)
 	for j in range(Ntrial):
-		p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=3)
-		plt.scatter(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5)
+		p1 = plt.plot(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, linewidth=4, zorder = 5)
+		plt.scatter(fPTAs, np.log10(hst[j]), color="#d95f02", alpha=0.5, zorder = 5)
 	#
 		if (plotmult):
-			p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5, linestyle="--", linewidth=3)
-			plt.scatter(fPTAs, np.log10(hst2[j]), color="#1b9e77", alpha=0.5)
+			p2 = plt.plot(fPTAs, np.log10(hst2[j]), color="#66a61e", alpha=0.5, linestyle="--", linewidth=4)
+			plt.scatter(fPTAs, np.log10(hst2[j]), color="#66a61e", alpha=0.5)
 	#
-			p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5, linestyle=":", linewidth=3)
-			plt.scatter(fPTAs, np.log10(hst3[j]), color="#7570b3", alpha=0.5)
+			p3 = plt.plot(fPTAs, np.log10(hst3[j]), color="#1b9e77", alpha=0.5, linestyle="-.", linewidth=4)
+			plt.scatter(fPTAs, np.log10(hst3[j]), color="#1b9e77", alpha=0.5)
 	#
-			p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.", linewidth=3)
+			p4 = plt.plot(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5, linestyle="-.", linewidth=4)
 			plt.scatter(fPTAs, np.log10(hst4[j]), color="#e7298a", alpha=0.5)
 
-
-
+#66a61e
+#1b9e77
+#7570b3
 
 	plt.axvspan(   -9.0,   np.log10(2.*10.**(-7)), color='gray', alpha=0.1, lw=0)
 
@@ -381,9 +404,9 @@ if (fEdd_Dist==True):
 	plt.tight_layout()
 
 	if (plotmult):
-		plt.figtext(0.15, 0.25, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
-		plt.figtext(0.15,0.19, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
-		plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"$a_{\rm{max}}(Fid.) = %g$pc, $\dot{\mathcal{M}}(Fid.)=%g$" %(KQ,eps), r"$10a_{\rm{max}}(Fid.)$", r"$10a_{\rm{max}}(Fid.)$, $0.01\dot{\mathcal{M}}(Fid.)$", r"$10^4a_{\rm{max}}(Fid.)$, $10^4\dot{\mathcal{M}}(Fid.)$"), (0.615, 0.725), fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		plt.figtext(0.19, 0.25, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
+		plt.figtext(0.19,0.19, r"$q^{\rm{Vmin}}_{s}=%g$" %qmin_EHT, color='black', fontsize=15)
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0]], (r"$a^{\rm{Fid}}_{\rm{max}} = %g$pc, $\dot{\mathcal{M}}^{\rm{Fid}}=%g$" %(KQ,eps), r"$10a^{\rm{Fid}}_{\rm{max}}$", r"$10a^{\rm{Fid}}_{\rm{max}}$, $0.01\dot{\mathcal{M}}^{\rm{Fid}}$", r"$10a^{\rm{Fid}}_{\rm{max}}$, $100\dot{\mathcal{M}}^{\rm{Fid}}$"), (0.58, 0.67), fontsize = 14)#(0.685, 0.64), fontsize = 14)
 	else:
 		plt.figtext(0.78,0.87, r"$f_{\rm{bin}}=%g$" %fbin, color='black', fontsize=15)
 		plt.figtext(0.78,0.81, r"$\dot{\mathcal{M}}=%g$" %eps, color='black', fontsize=15)
@@ -432,10 +455,10 @@ else:
 
 	if (Lmx==24.0):
 		plt.title("LLAGN")
-		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 15)#(0.685, 0.64), fontsize = 14)
 		Savename = 'hc_of_fGW_LLAGN_deltaFeDD_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
 	else:
-		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 12)#(0.685, 0.64), fontsize = 14)
+		plt.figlegend([p1[0],p2[0],p3[0],p4[0], p5[0]], (r"Fid., $f_{\rm{bin}} = %g$" %fbin, r"$f_{\rm{Edd}}=10^{-3}$", r"$\dot{\mathcal{M}}=10^{-3}$", r"$\dot{\mathcal{M}},f_{\rm{Edd}}=10^{-3}$", r"$10^{-15} \left(\frac{f_{\rm{GW}} }{1 \rm{yr}^{-1}}\right)^{-2/3}$"), "upper right", fontsize = 15)#(0.685, 0.64), fontsize = 14)
 		Savename = 'hc_of_fGW_Fid_qminEHT%g_qminPOP%g_amax%g_eps%g_Fmin%gJy_thMn%gmuas_Pbase%gyr_zmax%g_Lmx%g_Trap%g.png'%(qmin_EHT, qmin_POP, KQ, eps, FminSv, thMnSv, PbaseSv, zmax, Lmx, Ntrap_z)
 
 	Savename = Savename.replace('.', 'p')

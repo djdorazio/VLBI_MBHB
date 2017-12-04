@@ -47,8 +47,8 @@ else:
 
 
 #low dep on Mdot, got rid of fedd with dist func, qmin and Npc remain
-Mmx_Pbase = True
 fEdd_Npc = False
+Mmx_Pbase = True
 Mdot_Npc = True
 qmin_Npc = True
 

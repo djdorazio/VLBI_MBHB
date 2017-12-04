@@ -22,7 +22,7 @@ import math as ma
 
 
 ## method optioncs
-fEdd_Dist = True
+fEdd_Dist = False
 
 if (fEdd_Dist):
 	import VLBI_IntFuncs_fEddDist as IFs 
@@ -71,7 +71,7 @@ KQ = 10.**(-1.0)  #0.01 ## sets number of pc at which RL turns on
 qmin_POP = np.minimum(qmin_EHT, 0.01)  ### qmin of all MBHBS 
 
 eps = 1.0  ## sets migration (accretion rate in CBD pushing two together)
-f_Edd = 10.**(-4.1) 
+f_Edd = 0.1#10.**(-4.1) 
 
 # if (Lmx==24.0):
 # 	f_Edd = 0.0001

@@ -626,7 +626,7 @@ def FbinofLmm(Lmm, z, Mmx, chi, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ,
 	# 	return fbin_GWgas(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL)
 	
 
-	return np.exp(-(Mbn/Mmx)**20) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
+	return np.exp(-(Mbn/Mmx)**4) * fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 
 	#return  fbin_GWgas_L(z, Mbn*Msun, thMn, qmin_EHT, qmin_POP, eps, f_Edd, Pbase, KQ, MdEff, xi, fbin, h, Om, OL, Lmm)
 
